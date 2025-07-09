@@ -4,15 +4,15 @@ This implementation provides full CRUD (Create, Read, Update, Delete) operations
 
 ## API Endpoints
 
-### Base URL: `/printers`
+### Base URL: `/v1/printers`
 
 | Method | Endpoint | Description | Request Body | Response |
 |--------|----------|-------------|--------------|----------|
-| POST | `/printers` | Create a new printer | CreatePrinterDto | PrinterDto |
-| GET | `/printers` | Get all printers | - | PrinterDto[] |
-| GET | `/printers/:id` | Get printer by ID | - | PrinterDto |
-| PATCH | `/printers/:id` | Update printer | PatchPrinterDto | PrinterDto |
-| DELETE | `/printers/:id` | Delete printer | - | 204 No Content |
+| POST | `/v1/printers` | Create a new printer | CreatePrinterDto | PrinterDto |
+| GET | `/v1/printers` | Get all printers | - | PrinterDto[] |
+| GET | `/v1/printers/:id` | Get printer by ID | - | PrinterDto |
+| PATCH | `/v1/printers/:id` | Update printer | PatchPrinterDto | PrinterDto |
+| DELETE | `/v1/printers/:id` | Delete printer | - | 204 No Content |
 
 ## Data Models
 
@@ -90,7 +90,7 @@ src/
 
 ### Create a Printer
 ```bash
-POST /printers
+POST /v1/printers
 Content-Type: application/json
 
 {
@@ -102,17 +102,17 @@ Content-Type: application/json
 
 ### Get All Printers
 ```bash
-GET /printers
+GET /v1/printers
 ```
 
 ### Get Printer by ID
 ```bash
-GET /printers/123e4567-e89b-12d3-a456-426614174000
+GET /v1/printers/123e4567-e89b-12d3-a456-426614174000
 ```
 
 ### Update Printer
 ```bash
-PATCH /printers/123e4567-e89b-12d3-a456-426614174000
+PATCH /v1/printers/123e4567-e89b-12d3-a456-426614174000
 Content-Type: application/json
 
 {
@@ -122,7 +122,7 @@ Content-Type: application/json
 
 ### Delete Printer
 ```bash
-DELETE /printers/123e4567-e89b-12d3-a456-426614174000
+DELETE /v1/printers/123e4567-e89b-12d3-a456-426614174000
 ```
 
 ## Testing

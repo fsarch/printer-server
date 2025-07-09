@@ -15,7 +15,7 @@ import { PrinterService } from '../repositories/printer.service.js';
 import { CreatePrinterDto, PatchPrinterDto, PrinterDto } from '../models/printer.dto.js';
 
 @ApiTags('printers')
-@Controller('printers')
+@Controller({ path: 'printers', version: '1' })
 export class PrintersController {
   constructor(private readonly printerService: PrinterService) {}
 
