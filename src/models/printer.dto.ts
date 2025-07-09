@@ -91,14 +91,6 @@ export class PrinterDto {
   })
   creationTime: Date;
 
-  @ApiProperty({
-    description: 'Deletion time',
-    type: 'string',
-    format: 'date-time',
-    nullable: true,
-  })
-  deletionTime: Date | null;
-
   static FromDbo(printer: Printer): PrinterDto {
     return {
       id: printer.id,
@@ -106,7 +98,6 @@ export class PrinterDto {
       name: printer.name,
       externalId: printer.externalId || null,
       creationTime: printer.creationTime,
-      deletionTime: printer.deletionTime || null,
     };
   }
 }
