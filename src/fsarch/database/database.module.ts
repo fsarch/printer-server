@@ -5,7 +5,7 @@ import { ModuleConfigurationService } from '../configuration/module/module-confi
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { DATABASE_CONFIG_VALIDATOR } from './database-config.validator.js';
 import { ConfigDatabaseType } from '../configuration/config.type.js';
-import { EntitySchema } from "typeorm";
+import { EntitySchema } from 'typeorm';
 
 export type DatabaseModuleOptions = {
   // eslint-disable-next-line @typescript-eslint/ban-types
@@ -26,9 +26,7 @@ export class DatabaseModule {
               name: 'database',
             }),
           ],
-          inject: [
-            'DATABASE_CONFIG'
-          ],
+          inject: ['DATABASE_CONFIG'],
           useFactory: async (
             databaseConfigService: ModuleConfigurationService<ConfigDatabaseType>,
           ): Promise<TypeOrmModuleOptions> => {
@@ -49,7 +47,10 @@ export class DatabaseModule {
               } as TypeOrmModuleOptions;
             }
 
-            if (databaseConfig.type === 'cockroachdb' || databaseConfig.type === 'postgres') {
+            if (
+              databaseConfig.type === 'cockroachdb' ||
+              databaseConfig.type === 'postgres'
+            ) {
               const sslOptions: Partial<{
                 rejectUnauthorized: boolean;
                 ca: string | Buffer;
@@ -85,7 +86,9 @@ export class DatabaseModule {
                   if (typeof databaseConfig.ssl.key === 'string') {
                     sslOptions.key = databaseConfig.ssl.key;
                   } else {
-                    sslOptions.key = await readFile(databaseConfig.ssl.key.path);
+                    sslOptions.key = await readFile(
+                      databaseConfig.ssl.key.path,
+                    );
                   }
                 }
               }

@@ -34,7 +34,10 @@ export class PrinterService {
     });
   }
 
-  async UpdatePrinter(id: string, patchPrinterDto: PatchPrinterDto): Promise<Printer> {
+  async UpdatePrinter(
+    id: string,
+    patchPrinterDto: PatchPrinterDto,
+  ): Promise<Printer> {
     // Check if printer exists
     await this.GetById(id);
 

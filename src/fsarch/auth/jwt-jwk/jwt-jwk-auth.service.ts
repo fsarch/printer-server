@@ -1,11 +1,16 @@
-import { Inject, Injectable, NotImplementedException, UnauthorizedException } from '@nestjs/common';
-import { IAuthService } from "../types/auth-service.type.js";
-import { Request } from "express";
-import { ModuleConfigurationService } from "../../configuration/module/module-configuration.service.js";
-import { ConfigJwtJwkAuthType } from "../../configuration/config.type.js";
-import { JwtService } from "@nestjs/jwt";
-import { createRemoteJWKSet, jwtVerify } from "jose";
-import { User } from "../user.js";
+import {
+  Inject,
+  Injectable,
+  NotImplementedException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { IAuthService } from '../types/auth-service.type.js';
+import { Request } from 'express';
+import { ModuleConfigurationService } from '../../configuration/module/module-configuration.service.js';
+import { ConfigJwtJwkAuthType } from '../../configuration/config.type.js';
+import { JwtService } from '@nestjs/jwt';
+import { createRemoteJWKSet, jwtVerify } from 'jose';
+import { User } from '../user.js';
 
 @Injectable()
 export class JwtJwkAuthService implements IAuthService {
@@ -18,7 +23,10 @@ export class JwtJwkAuthService implements IAuthService {
     this.jwkSet = createRemoteJWKSet(new URL(authConfigService.get().jwkUrl));
   }
 
-  public async signIn(username: string, password: string): Promise<{ accessToken: string; }> {
+  public async signIn(
+    username: string,
+    password: string,
+  ): Promise<{ accessToken: string }> {
     throw new NotImplementedException();
   }
 

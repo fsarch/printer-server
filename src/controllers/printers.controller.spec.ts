@@ -1,7 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrintersController } from './printers.controller';
 import { PrinterService } from '../repositories/printer.service';
-import { CreatePrinterDto, PatchPrinterDto, PrinterDto } from '../models/printer.dto';
+import {
+  CreatePrinterDto,
+  PatchPrinterDto,
+  PrinterDto,
+} from '../models/printer.dto';
 
 describe('PrintersController', () => {
   let controller: PrintersController;
@@ -57,7 +61,9 @@ describe('PrintersController', () => {
 
       const result = await controller.create(createPrinterDto);
 
-      expect(mockPrinterService.CreatePrinter).toHaveBeenCalledWith(createPrinterDto);
+      expect(mockPrinterService.CreatePrinter).toHaveBeenCalledWith(
+        createPrinterDto,
+      );
       expect(result).toEqual(PrinterDto.FromDbo(mockPrinter));
     });
   });
@@ -88,7 +94,9 @@ describe('PrintersController', () => {
       const result = await controller.findAll();
 
       expect(mockPrinterService.ListPrinters).toHaveBeenCalled();
-      expect(result).toEqual(mockPrinters.map(printer => PrinterDto.FromDbo(printer)));
+      expect(result).toEqual(
+        mockPrinters.map((printer) => PrinterDto.FromDbo(printer)),
+      );
     });
   });
 
@@ -133,7 +141,10 @@ describe('PrintersController', () => {
 
       const result = await controller.update(printerId, patchPrinterDto);
 
-      expect(mockPrinterService.UpdatePrinter).toHaveBeenCalledWith(printerId, patchPrinterDto);
+      expect(mockPrinterService.UpdatePrinter).toHaveBeenCalledWith(
+        printerId,
+        patchPrinterDto,
+      );
       expect(result).toEqual(PrinterDto.FromDbo(updatedPrinter));
     });
   });

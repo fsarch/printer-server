@@ -2,17 +2,29 @@
 
 This implementation provides full CRUD (Create, Read, Update, Delete) operations for printers following the material-tracing-server structure and conventions.
 
+## Authorization
+
+All printer endpoints require authorization using Bearer Token authentication. Users must have the `manage_printers` role to access any of the printer endpoints.
+
+### Authentication Header
+```
+Authorization: Bearer <your-jwt-token>
+```
+
+### Required Role
+- `manage_printers`: Required for all printer CRUD operations
+
 ## API Endpoints
 
 ### Base URL: `/v1/printers`
 
-| Method | Endpoint | Description | Request Body | Response |
-|--------|----------|-------------|--------------|----------|
-| POST | `/v1/printers` | Create a new printer | CreatePrinterDto | PrinterDto |
-| GET | `/v1/printers` | Get all printers | - | PrinterDto[] |
-| GET | `/v1/printers/:id` | Get printer by ID | - | PrinterDto |
-| PATCH | `/v1/printers/:id` | Update printer | PatchPrinterDto | PrinterDto |
-| DELETE | `/v1/printers/:id` | Delete printer | - | 204 No Content |
+| Method | Endpoint | Description | Authorization | Request Body | Response |
+|--------|----------|-------------|---------------|--------------|----------|
+| POST | `/v1/printers` | Create a new printer | manage_printers | CreatePrinterDto | PrinterDto |
+| GET | `/v1/printers` | Get all printers | manage_printers | - | PrinterDto[] |
+| GET | `/v1/printers/:id` | Get printer by ID | manage_printers | - | PrinterDto |
+| PATCH | `/v1/printers/:id` | Update printer | manage_printers | PatchPrinterDto | PrinterDto |
+| DELETE | `/v1/printers/:id` | Delete printer | manage_printers | - | 204 No Content |
 
 ## Data Models
 
@@ -86,12 +98,30 @@ src/
 - **Swagger** for API documentation
 - **Jest** for unit testing
 
+## Error Responses
+
+### Authorization Errors
+
+| Status Code | Description | Response Body |
+|-------------|-------------|---------------|
+| 401 | Unauthorized - Missing or invalid authentication token | `{ "statusCode": 401, "message": "Unauthorized" }` |
+| 403 | Forbidden - User lacks required role (`manage_printers`) | `{ "statusCode": 403, "message": "Forbidden resource" }` |
+
+### Common Errors
+
+| Status Code | Description | Response Body |
+|-------------|-------------|---------------|
+| 400 | Bad Request - Invalid input data | `{ "statusCode": 400, "message": ["validation errors"], "error": "Bad Request" }` |
+| 404 | Not Found - Printer does not exist | `{ "statusCode": 404, "message": "Printer not found" }` |
+| 422 | Unprocessable Entity - Business logic validation error | `{ "statusCode": 422, "message": "error details" }` |
+
 ## Usage Examples
 
 ### Create a Printer
 ```bash
 POST /v1/printers
 Content-Type: application/json
+Authorization: Bearer <your-jwt-token>
 
 {
   "printerTypeId": "123e4567-e89b-12d3-a456-426614174000",
@@ -103,17 +133,20 @@ Content-Type: application/json
 ### Get All Printers
 ```bash
 GET /v1/printers
+Authorization: Bearer <your-jwt-token>
 ```
 
 ### Get Printer by ID
 ```bash
 GET /v1/printers/123e4567-e89b-12d3-a456-426614174000
+Authorization: Bearer <your-jwt-token>
 ```
 
 ### Update Printer
 ```bash
 PATCH /v1/printers/123e4567-e89b-12d3-a456-426614174000
 Content-Type: application/json
+Authorization: Bearer <your-jwt-token>
 
 {
   "name": "Updated Printer Name"
@@ -123,6 +156,7 @@ Content-Type: application/json
 ### Delete Printer
 ```bash
 DELETE /v1/printers/123e4567-e89b-12d3-a456-426614174000
+Authorization: Bearer <your-jwt-token>
 ```
 
 ## Testing

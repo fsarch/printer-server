@@ -9,29 +9,48 @@ import {
   ParseUUIDPipe,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { PrinterService } from '../repositories/printer.service.js';
-import { CreatePrinterDto, PatchPrinterDto, PrinterDto } from '../models/printer.dto.js';
+import {
+  CreatePrinterDto,
+  PatchPrinterDto,
+  PrinterDto,
+} from '../models/printer.dto.js';
+import { RolesGuard } from '../fsarch/uac/guards/roles.guard.js';
+import { Roles } from '../fsarch/uac/decorators/roles.decorator.js';
+import { Role } from '../fsarch/auth/role.enum.js';
 
 @ApiTags('printers')
+@ApiBearerAuth()
+@UseGuards(RolesGuard)
 @Controller({ path: 'printers', version: '1' })
 export class PrintersController {
   constructor(private readonly printerService: PrinterService) {}
 
   @Post()
+  @Roles(Role.manage_printers)
   @ApiOperation({ summary: 'Create a new printer' })
   @ApiResponse({
     status: 201,
     description: 'Printer created successfully',
     type: PrinterDto,
   })
-  async create(@Body() createPrinterDto: CreatePrinterDto): Promise<PrinterDto> {
+  async create(
+    @Body() createPrinterDto: CreatePrinterDto,
+  ): Promise<PrinterDto> {
     const printer = await this.printerService.CreatePrinter(createPrinterDto);
     return PrinterDto.FromDbo(printer);
   }
 
   @Get()
+  @Roles(Role.manage_printers)
   @ApiOperation({ summary: 'Get all printers' })
   @ApiResponse({
     status: 200,
@@ -40,10 +59,11 @@ export class PrintersController {
   })
   async findAll(): Promise<PrinterDto[]> {
     const printers = await this.printerService.ListPrinters();
-    return printers.map(printer => PrinterDto.FromDbo(printer));
+    return printers.map((printer) => PrinterDto.FromDbo(printer));
   }
 
   @Get(':id')
+  @Roles(Role.manage_printers)
   @ApiOperation({ summary: 'Get printer by ID' })
   @ApiResponse({
     status: 200,
@@ -60,6 +80,7 @@ export class PrintersController {
   }
 
   @Patch(':id')
+  @Roles(Role.manage_printers)
   @ApiOperation({ summary: 'Update printer by ID' })
   @ApiResponse({
     status: 200,
@@ -74,11 +95,15 @@ export class PrintersController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() patchPrinterDto: PatchPrinterDto,
   ): Promise<PrinterDto> {
-    const printer = await this.printerService.UpdatePrinter(id, patchPrinterDto);
+    const printer = await this.printerService.UpdatePrinter(
+      id,
+      patchPrinterDto,
+    );
     return PrinterDto.FromDbo(printer);
   }
 
   @Delete(':id')
+  @Roles(Role.manage_printers)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete printer by ID' })
   @ApiResponse({

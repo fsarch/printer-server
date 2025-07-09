@@ -1,6 +1,6 @@
 import { Injectable, Scope, ConsoleLogger } from '@nestjs/common';
-import { isErrorLike, serializeError } from "serialize-error";
-import pino, { type Logger } from "pino";
+import { isErrorLike, serializeError } from 'serialize-error';
+import pino, { type Logger } from 'pino';
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class PinoLogger extends ConsoleLogger {
@@ -28,10 +28,12 @@ export class PinoLogger extends ConsoleLogger {
       logData.error = serializeError(logData.error);
     }
 
-    console.error(JSON.stringify({
-      message,
-      data,
-    }));
+    console.error(
+      JSON.stringify({
+        message,
+        data,
+      }),
+    );
   }
 
   public log(message: any, ...args: any[]) {
@@ -43,7 +45,7 @@ export class PinoLogger extends ConsoleLogger {
         payload: data,
         section: context,
       },
-      message
+      message,
     );
   }
 
@@ -56,7 +58,7 @@ export class PinoLogger extends ConsoleLogger {
         payload: data,
         section: context,
       },
-      message
+      message,
     );
   }
 
@@ -69,7 +71,7 @@ export class PinoLogger extends ConsoleLogger {
         payload: data,
         section: context,
       },
-      message
+      message,
     );
   }
 
@@ -82,7 +84,7 @@ export class PinoLogger extends ConsoleLogger {
         payload: data,
         section: context,
       },
-      message
+      message,
     );
   }
 
@@ -95,7 +97,7 @@ export class PinoLogger extends ConsoleLogger {
         payload: data,
         section: context,
       },
-      message
+      message,
     );
   }
 
@@ -108,7 +110,7 @@ export class PinoLogger extends ConsoleLogger {
         payload: data,
         section: context,
       },
-      message
+      message,
     );
   }
 }

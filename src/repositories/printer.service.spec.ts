@@ -161,7 +161,10 @@ describe('PrinterService', () => {
 
       const result = await service.UpdatePrinter(printerId, patchPrinterDto);
 
-      expect(mockRepository.update).toHaveBeenCalledWith(printerId, patchPrinterDto);
+      expect(mockRepository.update).toHaveBeenCalledWith(
+        printerId,
+        patchPrinterDto,
+      );
       expect(result).toEqual(updatedPrinter);
     });
 
@@ -173,7 +176,9 @@ describe('PrinterService', () => {
 
       mockRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.UpdatePrinter(printerId, patchPrinterDto)).rejects.toThrow(
+      await expect(
+        service.UpdatePrinter(printerId, patchPrinterDto),
+      ).rejects.toThrow(
         new NotFoundException(`Printer with ID ${printerId} not found`),
       );
     });
