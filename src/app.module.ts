@@ -13,7 +13,7 @@ import { PrintersModule } from "./controllers/printers.module.js";
 @Module({
   imports: [
     FsarchModule.register({
-      auth: {},
+      // auth: {},
       database: {
         entities: [
           PrintJob,
