@@ -12,7 +12,10 @@ export class PrinterService {
   ) {}
 
   async CreatePrinter(createPrinterDto: CreatePrinterDto): Promise<Printer> {
-    const printer = this.printerRepository.create(createPrinterDto);
+    const printer = this.printerRepository.create({
+      id: crypto.randomUUID(),
+      ...createPrinterDto,
+    });
     return await this.printerRepository.save(printer);
   }
 

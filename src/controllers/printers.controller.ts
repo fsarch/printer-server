@@ -23,13 +23,11 @@ import {
   PatchPrinterDto,
   PrinterDto,
 } from '../models/printer.dto.js';
-import { RolesGuard } from '../fsarch/uac/guards/roles.guard.js';
 import { Roles } from '../fsarch/uac/decorators/roles.decorator.js';
 import { Role } from '../fsarch/auth/role.enum.js';
 
 @ApiTags('printers')
 @ApiBearerAuth()
-@UseGuards(RolesGuard)
 @Controller({ path: 'printers', version: '1' })
 export class PrintersController {
   constructor(private readonly printerService: PrinterService) {}

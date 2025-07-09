@@ -42,12 +42,15 @@ export class JwtJwkAuthService implements IAuthService {
       throw new UnauthorizedException();
     }
 
+    let user;
+
     try {
       const jwtData = await jwtVerify(token, this.jwkSet);
 
-      request['user'] = {
+      user = {
         id: jwtData.payload.sub,
       };
+      request['user'] = user;
     } catch (error) {
       console.debug('could not verify jwt', error);
 
@@ -55,6 +58,7 @@ export class JwtJwkAuthService implements IAuthService {
     }
 
     return new User({
+      id: user.id,
       accessToken: token,
     });
   }
