@@ -3,6 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { Role } from '../../auth/role.enum.js';
 import { ROLES_KEY } from '../decorators/roles.decorator.js';
 import { UacService } from '../uac.service.js';
+import { User } from "../../auth/user";
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -19,10 +20,10 @@ export class RolesGuard implements CanActivate {
     if (!requiredRoles) {
       return true;
     }
-    const { user } = context.switchToHttp().getRequest();
+    const user = context.switchToHttp().getRequest().user as User;
 
     for (const role of requiredRoles) {
-      if (await this.uacService.hasGrant(user.id, [role])) {
+      if (await this.uacService.hasGrant(user.getId(), [role])) {
         return true;
       }
     }

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { JwtJwkAuthService } from './jwt-jwk-auth.service.js';
-import { ModuleConfiguration } from "../../configuration/module/module-configuration.module.js";
+import { ModuleConfiguration } from '../../configuration/module/module-configuration.module.js';
 
 @Module({
   imports: [

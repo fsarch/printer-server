@@ -1,0 +1,19 @@
+auth:
+  type: static
+  secret: test-secret
+  users:
+    - id: test-user-id
+      username: testuser
+      password: testpass
+
+uac:
+  type: static
+  users:
+    - user_id: test-user-id
+      permissions:
+        - "read:printers"
+        - "write:printers"
+
+database:
+  type: sqlite
+  database: ":memory:"

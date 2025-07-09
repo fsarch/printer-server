@@ -5,7 +5,7 @@ import {
   DatabaseModule,
   DatabaseModuleOptions,
 } from './database/database.module.js';
-import { AuthModule } from "./auth/auth.module.js";
+import { AuthModule } from './auth/auth.module.js';
 
 type FSArchOptions = {
   auth?: {};

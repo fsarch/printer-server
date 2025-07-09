@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 import { getDataType } from './utils/data-type.mapper.js';
-import { PrinterType } from "../../constants/printer-type.enum";
-import { PrintJobType } from "../../constants/print-job-type.enum";
+import { PrinterType } from '../../constants/printer-type.enum';
+import { PrintJobType } from '../../constants/print-job-type.enum';
 
 export class BaseTables1720373216667 implements MigrationInterface {
   name = 'BaseTables1720373216667';
@@ -82,20 +82,25 @@ export class BaseTables1720373216667 implements MigrationInterface {
             isNullable: true,
           },
         ],
-        indices: [{
-          name: 'UQ__printer__external_id',
-          columnNames: ['external_id'],
-          where: 'deletion_time IS NULL'
-        }, {
-          name: 'IDX__printer__printer_type_id',
-          columnNames: ['printer_type_id'],
-        }],
-        foreignKeys: [{
-          name: 'FK__printer__printer_type_id',
-          columnNames: ['printer_type_id'],
-          referencedTableName: 'printer_type',
-          referencedColumnNames: ['id'],
-        }],
+        indices: [
+          {
+            name: 'UQ__printer__external_id',
+            columnNames: ['external_id'],
+            where: 'deletion_time IS NULL',
+          },
+          {
+            name: 'IDX__printer__printer_type_id',
+            columnNames: ['printer_type_id'],
+          },
+        ],
+        foreignKeys: [
+          {
+            name: 'FK__printer__printer_type_id',
+            columnNames: ['printer_type_id'],
+            referencedTableName: 'printer_type',
+            referencedColumnNames: ['id'],
+          },
+        ],
       }),
     );
     // endregion
@@ -146,28 +151,35 @@ export class BaseTables1720373216667 implements MigrationInterface {
             isNullable: true,
           },
         ],
-        indices: [{
-          name: 'IDX__printer_credential__external_id',
-          columnNames: ['external_id'],
-        }, {
-          name: 'IDX__printer_credential__printer_id',
-          columnNames: ['printer_id'],
-        }, {
-          name: 'IDX__printer_credential__token__printer_id',
-          columnNames: ['token', 'printer_id'],
-          where: 'deletion_time IS NULL'
-        }, {
-          name: 'UI__printer_credential__token',
-          columnNames: ['token'],
-          isUnique: true,
-          where: 'deletion_time IS NULL'
-        }],
-        foreignKeys: [{
-          name: 'FK__printer_credential__printer_id',
-          columnNames: ['printer_id'],
-          referencedTableName: 'printer',
-          referencedColumnNames: ['id'],
-        }],
+        indices: [
+          {
+            name: 'IDX__printer_credential__external_id',
+            columnNames: ['external_id'],
+          },
+          {
+            name: 'IDX__printer_credential__printer_id',
+            columnNames: ['printer_id'],
+          },
+          {
+            name: 'IDX__printer_credential__token__printer_id',
+            columnNames: ['token', 'printer_id'],
+            where: 'deletion_time IS NULL',
+          },
+          {
+            name: 'UI__printer_credential__token',
+            columnNames: ['token'],
+            isUnique: true,
+            where: 'deletion_time IS NULL',
+          },
+        ],
+        foreignKeys: [
+          {
+            name: 'FK__printer_credential__printer_id',
+            columnNames: ['printer_id'],
+            referencedTableName: 'printer',
+            referencedColumnNames: ['id'],
+          },
+        ],
       }),
     );
     // endregion
@@ -196,10 +208,12 @@ export class BaseTables1720373216667 implements MigrationInterface {
             isNullable: true,
           },
         ],
-        indices: [{
-          name: 'UQ__print_job_type__external_id',
-          columnNames: ['external_id'],
-        }],
+        indices: [
+          {
+            name: 'UQ__print_job_type__external_id',
+            columnNames: ['external_id'],
+          },
+        ],
       }),
     );
 
@@ -258,32 +272,40 @@ export class BaseTables1720373216667 implements MigrationInterface {
             default: 'now()',
           },
         ],
-        indices: [{
-          name: 'IDX__print_job__printer_id',
-          columnNames: ['printer_id'],
-        }, {
-          name: 'IDX__print_job__print_job_type_id',
-          columnNames: ['print_job_type_id'],
-        }, {
-          name: 'IDX__print_job__external_id',
-          columnNames: ['external_id'],
-        }],
-        foreignKeys: [{
-          name: 'FK__print_job__printer_id',
-          columnNames: ['printer_id'],
-          referencedTableName: 'printer',
-          referencedColumnNames: ['id'],
-        }, {
-          name: 'FK__print_job__print_job_type_id',
-          columnNames: ['print_job_type_id'],
-          referencedTableName: 'print_job_type',
-          referencedColumnNames: ['id'],
-        }, {
-          name: 'FK__print_job__collection_printer_credential_id',
-          columnNames: ['collection_printer_credential_id'],
-          referencedTableName: 'printer_credential',
-          referencedColumnNames: ['id'],
-        }],
+        indices: [
+          {
+            name: 'IDX__print_job__printer_id',
+            columnNames: ['printer_id'],
+          },
+          {
+            name: 'IDX__print_job__print_job_type_id',
+            columnNames: ['print_job_type_id'],
+          },
+          {
+            name: 'IDX__print_job__external_id',
+            columnNames: ['external_id'],
+          },
+        ],
+        foreignKeys: [
+          {
+            name: 'FK__print_job__printer_id',
+            columnNames: ['printer_id'],
+            referencedTableName: 'printer',
+            referencedColumnNames: ['id'],
+          },
+          {
+            name: 'FK__print_job__print_job_type_id',
+            columnNames: ['print_job_type_id'],
+            referencedTableName: 'print_job_type',
+            referencedColumnNames: ['id'],
+          },
+          {
+            name: 'FK__print_job__collection_printer_credential_id',
+            columnNames: ['collection_printer_credential_id'],
+            referencedTableName: 'printer_credential',
+            referencedColumnNames: ['id'],
+          },
+        ],
       }),
     );
     // endregion
@@ -305,14 +327,16 @@ export class BaseTables1720373216667 implements MigrationInterface {
             isNullable: false,
           },
         ],
-        foreignKeys: [{
-          name: 'fk__receipt_print_job__id',
-          onUpdate: 'CASCADE',
-          onDelete: 'CASCADE',
-          columnNames: ['id'],
-          referencedColumnNames: ['id'],
-          referencedTableName: 'print_job',
-        }],
+        foreignKeys: [
+          {
+            name: 'fk__receipt_print_job__id',
+            onUpdate: 'CASCADE',
+            onDelete: 'CASCADE',
+            columnNames: ['id'],
+            referencedColumnNames: ['id'],
+            referencedTableName: 'print_job',
+          },
+        ],
       }),
     );
     // endregion

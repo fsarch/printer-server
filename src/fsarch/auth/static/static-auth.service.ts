@@ -1,12 +1,10 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { IAuthService } from '../types/auth-service.type.js';
 import { JwtService } from '@nestjs/jwt';
-import {
-  ConfigStaticAuthType,
-} from '../../configuration/config.type.js';
+import { ConfigStaticAuthType } from '../../configuration/config.type.js';
 import { ModuleConfigurationService } from '../../configuration/module/module-configuration.service.js';
-import { Request } from "express";
-import { User } from "../user.js";
+import { Request } from 'express';
+import { User } from '../user.js';
 
 @Injectable()
 export class StaticAuthService implements IAuthService {
@@ -27,19 +25,24 @@ export class StaticAuthService implements IAuthService {
       console.debug('could not get token from header');
       throw new UnauthorizedException();
     }
+
+    let user;
+
     try {
       const payload = await this.jwtService.verifyAsync(token);
 
-      request['user'] = {
+      user = {
         id: payload.sub,
       };
-    } catch(error) {
+      request['user'] = user;
+    } catch (error) {
       console.debug('could not verify jwt', error);
 
       throw new UnauthorizedException(error);
     }
 
     return new User({
+      id: user.id,
       accessToken: token,
     });
   }

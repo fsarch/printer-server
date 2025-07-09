@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { StaticAuthService } from './static/static-auth.service.js';
 import type { IAuthService, IUser } from './types/auth-service.type.js';
 import { ConfigAuthType } from '../configuration/config.type.js';
-import { JwtJwkAuthService } from "./jwt-jwk/jwt-jwk-auth.service.js";
+import { JwtJwkAuthService } from './jwt-jwk/jwt-jwk-auth.service.js';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -16,7 +16,8 @@ export class AuthService implements IAuthService {
   ) {
     const authType = configService.get<ConfigAuthType['type']>('auth.type');
 
-    this.authService = authType === 'static' ? staticAuthService : jwtJwkAuthService;
+    this.authService =
+      authType === 'static' ? staticAuthService : jwtJwkAuthService;
   }
 
   validateRequest(request: any): Promise<IUser> {
