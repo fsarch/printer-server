@@ -123,7 +123,7 @@ describe('PrintJobService', () => {
 
       expect(result).toBeDefined();
       expect(result.printerId).toBe(printerId);
-      expect(result.receiptData).toEqual({ $type: 'text', value: 'Hello' });
+      expect(result.data).toEqual({ $type: 'text', value: 'Hello' });
     });
   });
 
@@ -159,7 +159,7 @@ describe('PrintJobService', () => {
 
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe('job-1');
-      expect(result[0].receiptData).toEqual({ $type: 'text', value: 'Test' });
+      expect(result[0].data).toEqual({ $type: 'text', value: 'Test' });
     });
   });
 
