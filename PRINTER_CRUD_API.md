@@ -16,7 +16,7 @@ Authorization: Bearer <your-jwt-token>
 
 ## API Endpoints
 
-### Base URL: `/v1/printers`
+### Printers: `/v1/printers`
 
 | Method | Endpoint | Description | Authorization | Request Body | Response |
 |--------|----------|-------------|---------------|--------------|----------|
@@ -26,9 +26,19 @@ Authorization: Bearer <your-jwt-token>
 | PATCH | `/v1/printers/:id` | Update printer | manage_printers | PatchPrinterDto | PrinterDto |
 | DELETE | `/v1/printers/:id` | Delete printer | manage_printers | - | 204 No Content |
 
+### Print Jobs: `/v1/printers/:printerId/jobs`
+
+| Method | Endpoint | Description | Authorization | Request Body | Response |
+|--------|----------|-------------|---------------|--------------|----------|
+| POST | `/v1/printers/:printerId/jobs` | Create a new print job | manage_printers | CreatePrintJobDto | PrintJobDto |
+| GET | `/v1/printers/:printerId/jobs` | List print jobs for printer | manage_printers | - | PrintJobDto[] |
+| PATCH | `/v1/printers/:printerId/jobs/:jobId` | Update collection/print times | manage_printers | UpdatePrintJobDto | PrintJobDto |
+
 ## Data Models
 
-### CreatePrinterDto
+### Printer DTOs
+
+#### CreatePrinterDto
 ```typescript
 {
   printerTypeId: string;    // UUID - Required
@@ -37,7 +47,7 @@ Authorization: Bearer <your-jwt-token>
 }
 ```
 
-### PatchPrinterDto
+#### PatchPrinterDto
 ```typescript
 {
   printerTypeId?: string;  // UUID - Optional
@@ -46,7 +56,7 @@ Authorization: Bearer <your-jwt-token>
 }
 ```
 
-### PrinterDto (Response)
+#### PrinterDto (Response)
 ```typescript
 {
   id: string;              // UUID
@@ -55,6 +65,39 @@ Authorization: Bearer <your-jwt-token>
   externalId: string | null; // String or null
   creationTime: Date;      // ISO 8601 timestamp
   deletionTime: Date | null; // ISO 8601 timestamp or null
+}
+```
+
+### Print Job DTOs
+
+#### CreatePrintJobDto
+```typescript
+{
+  externalId?: string;     // String (max 256 chars) - Optional
+  data: ReceiptDataDto;    // Receipt data object - Required
+}
+```
+
+#### UpdatePrintJobDto
+```typescript
+{
+  collectionTime?: string; // ISO 8601 date-time string - Optional
+  printTime?: string;      // ISO 8601 date-time string - Optional
+}
+```
+
+#### PrintJobDto (Response)
+```typescript
+{
+  id: string;                           // UUID
+  printerId: string;                    // UUID
+  printJobTypeId: string;               // UUID
+  externalId: string | null;            // String or null
+  collectionPrinterCredentialId: string | null; // UUID or null
+  collectionTime: string | null;        // ISO 8601 date-time or null
+  printTime: string | null;             // ISO 8601 date-time or null
+  creationTime: Date;                   // ISO 8601 timestamp
+  receiptData?: any;                    // Receipt data (for receipt jobs)
 }
 ```
 
@@ -117,7 +160,9 @@ src/
 
 ## Usage Examples
 
-### Create a Printer
+### Printer Operations
+
+#### Create a Printer
 ```bash
 POST /v1/printers
 Content-Type: application/json
@@ -130,19 +175,19 @@ Authorization: Bearer <your-jwt-token>
 }
 ```
 
-### Get All Printers
+#### Get All Printers
 ```bash
 GET /v1/printers
 Authorization: Bearer <your-jwt-token>
 ```
 
-### Get Printer by ID
+#### Get Printer by ID
 ```bash
 GET /v1/printers/123e4567-e89b-12d3-a456-426614174000
 Authorization: Bearer <your-jwt-token>
 ```
 
-### Update Printer
+#### Update Printer
 ```bash
 PATCH /v1/printers/123e4567-e89b-12d3-a456-426614174000
 Content-Type: application/json
@@ -153,11 +198,48 @@ Authorization: Bearer <your-jwt-token>
 }
 ```
 
-### Delete Printer
+#### Delete Printer
 ```bash
 DELETE /v1/printers/123e4567-e89b-12d3-a456-426614174000
 Authorization: Bearer <your-jwt-token>
 ```
+
+### Print Job Operations
+
+#### Create a Print Job
+```bash
+POST /v1/printers/123e4567-e89b-12d3-a456-426614174000/jobs
+Content-Type: application/json
+Authorization: Bearer <your-jwt-token>
+
+{
+  "externalId": "JOB-001",
+  "data": {
+    "$type": "text",
+    "value": "Hello World"
+  }
+}
+```
+
+#### List Print Jobs
+```bash
+GET /v1/printers/123e4567-e89b-12d3-a456-426614174000/jobs
+Authorization: Bearer <your-jwt-token>
+```
+
+#### Update Print Job Times
+```bash
+PATCH /v1/printers/123e4567-e89b-12d3-a456-426614174000/jobs/456e7890-e89b-12d3-a456-426614174001
+Content-Type: application/json
+Authorization: Bearer <your-jwt-token>
+
+{
+  "collectionTime": "2023-01-01T10:00:00Z",
+  "printTime": "2023-01-01T12:00:00Z"
+}
+```
+
+**Note:** The UpdatePrintJobDto supports partial updates - you can provide only `collectionTime`, only `printTime`, or both fields.
 
 ## Testing
 
