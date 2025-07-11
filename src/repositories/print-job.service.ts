@@ -4,8 +4,6 @@ import { Repository } from 'typeorm';
 import { PrintJob } from '../database/entities/print_job.entity.js';
 import { ReceiptPrintJob } from '../database/entities/receipt_print_job.entity.js';
 import { Printer } from '../database/entities/printer.entity.js';
-import { PrinterType } from '../database/entities/printer_type.entity.js';
-import { CreatePrintJobDto, PrintJobDto, ReceiptDataDto } from '../models/print-job.dto.js';
 import { PrinterType as PrinterTypeEnum } from '../constants/printer-type.enum.js';
 import { PrintJobType as PrintJobTypeEnum } from '../constants/print-job-type.enum.js';
 import { validate } from 'class-validator';
@@ -14,7 +12,9 @@ import {
   AlignmentReceiptDataDto,
   TextReceiptDataDto,
   CutReceiptDataDto,
-  NewlineReceiptDataDto
+  NewlineReceiptDataDto,
+  CreatePrintJobDto,
+  PrintJobDto,
 } from '../models/print-job.dto.js';
 
 @Injectable()
