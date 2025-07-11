@@ -124,10 +124,10 @@ export class NewlineReceiptDataDto {
 }
 
 // Union type for receipt data (handled at validation level)
-export type ReceiptDataDto = 
-  | AlignmentReceiptDataDto 
-  | TextReceiptDataDto 
-  | CutReceiptDataDto 
+export type ReceiptDataDto =
+  | AlignmentReceiptDataDto
+  | TextReceiptDataDto
+  | CutReceiptDataDto
   | NewlineReceiptDataDto;
 
 export class CreatePrintJobDto {
@@ -215,7 +215,7 @@ export class PrintJobDto {
     description: 'Receipt data (only present for receipt print jobs)',
     nullable: true,
   })
-  receiptData?: any;
+  data?: any;
 
   static FromDbo(printJob: PrintJob, receiptData?: ReceiptPrintJob): PrintJobDto {
     return {
@@ -227,7 +227,7 @@ export class PrintJobDto {
       collectionTime: printJob.collectionTime,
       printTime: printJob.printTime,
       creationTime: printJob.creationTime,
-      receiptData: receiptData?.data,
+      data: receiptData?.data,
     };
   }
 }
