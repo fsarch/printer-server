@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
   Body,
   Param,
   ParseUUIDPipe,
@@ -17,6 +18,7 @@ import { PrintJobService } from '../repositories/print-job.service.js';
 import {
   CreatePrintJobDto,
   PrintJobDto,
+  UpdatePrintJobDto,
 } from '../models/print-job.dto.js';
 import { Roles } from '../fsarch/uac/decorators/roles.decorator.js';
 import { Role } from '../fsarch/auth/role.enum.js';
@@ -72,5 +74,29 @@ export class PrintJobsController {
     @Param('printerId', ParseUUIDPipe) printerId: string,
   ): Promise<PrintJobDto[]> {
     return await this.printJobService.listPrintJobs(printerId);
+  }
+
+  @Patch(':jobId')
+  @Roles(Role.manage_printers)
+  @ApiOperation({ summary: 'Update collection time and print time for a print job' })
+  @ApiResponse({
+    status: 200,
+    description: 'Print job updated successfully',
+    type: PrintJobDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Printer or print job not found',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid timestamp format',
+  })
+  async updatePrintJob(
+    @Param('printerId', ParseUUIDPipe) printerId: string,
+    @Param('jobId', ParseUUIDPipe) jobId: string,
+    @Body() updatePrintJobDto: UpdatePrintJobDto,
+  ): Promise<PrintJobDto> {
+    return await this.printJobService.updatePrintJob(printerId, jobId, updatePrintJobDto);
   }
 }

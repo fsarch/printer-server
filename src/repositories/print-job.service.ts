@@ -5,7 +5,7 @@ import { PrintJob } from '../database/entities/print_job.entity.js';
 import { ReceiptPrintJob } from '../database/entities/receipt_print_job.entity.js';
 import { Printer } from '../database/entities/printer.entity.js';
 import { PrinterType } from '../database/entities/printer_type.entity.js';
-import { CreatePrintJobDto, PrintJobDto, ReceiptDataDto } from '../models/print-job.dto.js';
+import { CreatePrintJobDto, PrintJobDto, ReceiptDataDto, UpdatePrintJobDto } from '../models/print-job.dto.js';
 import { PrinterType as PrinterTypeEnum } from '../constants/printer-type.enum.js';
 import { PrintJobType as PrintJobTypeEnum } from '../constants/print-job-type.enum.js';
 import { validate } from 'class-validator';
@@ -102,6 +102,67 @@ export class PrintJobService {
     }
 
     return result;
+  }
+
+  async updatePrintJob(printerId: string, jobId: string, updatePrintJobDto: UpdatePrintJobDto): Promise<PrintJobDto> {
+    // Check if printer exists
+    const printer = await this.printerRepository.findOne({
+      where: { id: printerId },
+    });
+
+    if (!printer) {
+      throw new NotFoundException(`Printer with ID ${printerId} not found`);
+    }
+
+    // Get the print job and verify it belongs to the printer
+    const printJob = await this.printJobRepository.findOne({
+      where: { id: jobId, printerId },
+    });
+
+    if (!printJob) {
+      throw new NotFoundException(`Print job with ID ${jobId} not found for printer ${printerId}`);
+    }
+
+    // Update only the provided fields
+    const updateData: Partial<PrintJob> = {};
+    
+    if (updatePrintJobDto.collectionTime !== undefined) {
+      updateData.collectionTime = updatePrintJobDto.collectionTime;
+    }
+    
+    if (updatePrintJobDto.printTime !== undefined) {
+      updateData.printTime = updatePrintJobDto.printTime;
+    }
+
+    // If no fields to update, return current job
+    if (Object.keys(updateData).length === 0) {
+      // Get receipt data if it's a receipt job
+      let receiptData: ReceiptPrintJob | undefined;
+      if (printJob.printJobTypeId === PrintJobTypeEnum.RECEIPT) {
+        receiptData = await this.receiptPrintJobRepository.findOne({
+          where: { id: printJob.id },
+        });
+      }
+      return PrintJobDto.FromDbo(printJob, receiptData);
+    }
+
+    // Update the print job
+    await this.printJobRepository.update(jobId, updateData);
+
+    // Get the updated print job
+    const updatedPrintJob = await this.printJobRepository.findOne({
+      where: { id: jobId },
+    });
+
+    // Get receipt data if it's a receipt job
+    let receiptData: ReceiptPrintJob | undefined;
+    if (updatedPrintJob && updatedPrintJob.printJobTypeId === PrintJobTypeEnum.RECEIPT) {
+      receiptData = await this.receiptPrintJobRepository.findOne({
+        where: { id: updatedPrintJob.id },
+      });
+    }
+
+    return PrintJobDto.FromDbo(updatedPrintJob!, receiptData);
   }
 
   private async validateReceiptData(data: any): Promise<void> {
