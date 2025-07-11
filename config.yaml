@@ -11,8 +11,7 @@ uac:
   users:
     - user_id: test-user-id
       permissions:
-        - "read:printers"
-        - "write:printers"
+        - "manage_printers"
 
 database:
   type: sqlite
