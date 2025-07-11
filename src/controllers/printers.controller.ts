@@ -23,6 +23,7 @@ import {
   PatchPrinterDto,
   PrinterDto,
 } from '../models/printer.dto.js';
+
 import { Roles } from '../fsarch/uac/decorators/roles.decorator.js';
 import { Role } from '../fsarch/auth/role.enum.js';
 
@@ -30,7 +31,9 @@ import { Role } from '../fsarch/auth/role.enum.js';
 @ApiBearerAuth()
 @Controller({ path: 'printers', version: '1' })
 export class PrintersController {
-  constructor(private readonly printerService: PrinterService) {}
+  constructor(
+    private readonly printerService: PrinterService,
+  ) {}
 
   @Post()
   @Roles(Role.manage_printers)
