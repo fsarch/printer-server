@@ -10,11 +10,11 @@ import { PrinterType as PrinterTypeEnum } from '../constants/printer-type.enum.j
 import { PrintJobType as PrintJobTypeEnum } from '../constants/print-job-type.enum.js';
 import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
-import { 
-  AlignmentReceiptDataDto, 
-  TextReceiptDataDto, 
-  CutReceiptDataDto, 
-  NewlineReceiptDataDto 
+import {
+  AlignmentReceiptDataDto,
+  TextReceiptDataDto,
+  CutReceiptDataDto,
+  NewlineReceiptDataDto
 } from '../models/print-job.dto.js';
 
 @Injectable()
@@ -44,7 +44,7 @@ export class PrintJobService {
     }
 
     // Validate receipt data
-    await this.validateReceiptData(createPrintJobDto.data);
+    await Promise.all(createPrintJobDto.data.map(async (d) => await this.validateReceiptData(d)));
 
     // Create print job
     const printJob = this.printJobRepository.create({
@@ -135,7 +135,7 @@ export class PrintJobService {
     const errors = await validate(dto);
 
     if (errors.length > 0) {
-      const errorMessages = errors.map(error => 
+      const errorMessages = errors.map(error =>
         Object.values(error.constraints || {}).join(', ')
       ).join('; ');
       throw new BadRequestException(`Validation failed: ${errorMessages}`);
@@ -146,7 +146,7 @@ export class PrintJobService {
       if (!Array.isArray(data.children)) {
         throw new BadRequestException('Alignment children must be an array');
       }
-      
+
       for (const child of data.children) {
         await this.validateReceiptData(child);
       }
