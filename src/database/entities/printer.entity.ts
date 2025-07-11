@@ -33,6 +33,7 @@ export class Printer {
     name: 'external_id',
     type: 'varchar',
     length: '256',
+    nullable: true,
   })
   externalId: string;
 

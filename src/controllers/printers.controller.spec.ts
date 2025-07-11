@@ -52,7 +52,9 @@ describe('PrintersController', () => {
 
       const mockPrinter = {
         id: 'printer-uuid',
-        ...createPrinterDto,
+        printerTypeId: createPrinterDto.printerTypeId,
+        name: createPrinterDto.name,
+        externalId: createPrinterDto.externalId || '',
         creationTime: new Date(),
         deletionTime: null,
       };
