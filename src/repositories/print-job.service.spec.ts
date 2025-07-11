@@ -161,6 +161,87 @@ describe('PrintJobService', () => {
       expect(result[0].id).toBe('job-1');
       expect(result[0].data).toEqual({ $type: 'text', value: 'Test' });
     });
+
+    it('should throw BadRequestException when printTime parameter is not "null"', async () => {
+      await expect(
+        service.listPrintJobs('printer-id', 'invalid-value'),
+      ).rejects.toThrow(BadRequestException);
+      
+      await expect(
+        service.listPrintJobs('printer-id', '2023-01-01T00:00:00Z'),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('should filter jobs without print time when printTime is "null"', async () => {
+      const printerId = 'printer-id';
+      const mockPrinter = { id: printerId };
+      const mockPrintJobs = [
+        {
+          id: 'job-1',
+          printerId,
+          printJobTypeId: PrintJobType.RECEIPT,
+          printTime: null,
+          creationTime: new Date(),
+        },
+      ];
+
+      mockPrinterRepository.findOne.mockResolvedValue(mockPrinter);
+      mockPrintJobRepository.find.mockResolvedValue(mockPrintJobs);
+      mockReceiptPrintJobRepository.findOne.mockResolvedValue({
+        id: 'job-1',
+        data: { $type: 'text', value: 'Test' },
+      });
+
+      const result = await service.listPrintJobs(printerId, 'null');
+
+      expect(mockPrintJobRepository.find).toHaveBeenCalledWith({
+        where: { printerId, printTime: null },
+        order: { creationTime: 'DESC' },
+      });
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe('job-1');
+    });
+
+    it('should return all jobs when printTime parameter is omitted', async () => {
+      const printerId = 'printer-id';
+      const mockPrinter = { id: printerId };
+      const mockPrintJobs = [
+        {
+          id: 'job-1',
+          printerId,
+          printJobTypeId: PrintJobType.RECEIPT,
+          printTime: null,
+          creationTime: new Date(),
+        },
+        {
+          id: 'job-2',
+          printerId,
+          printJobTypeId: PrintJobType.RECEIPT,
+          printTime: '2023-01-01T12:00:00Z',
+          creationTime: new Date(),
+        },
+      ];
+
+      mockPrinterRepository.findOne.mockResolvedValue(mockPrinter);
+      mockPrintJobRepository.find.mockResolvedValue(mockPrintJobs);
+      mockReceiptPrintJobRepository.findOne
+        .mockResolvedValueOnce({
+          id: 'job-1',
+          data: { $type: 'text', value: 'Test1' },
+        })
+        .mockResolvedValueOnce({
+          id: 'job-2',
+          data: { $type: 'text', value: 'Test2' },
+        });
+
+      const result = await service.listPrintJobs(printerId);
+
+      expect(mockPrintJobRepository.find).toHaveBeenCalledWith({
+        where: { printerId },
+        order: { creationTime: 'DESC' },
+      });
+      expect(result).toHaveLength(2);
+    });
   });
 
   describe('updatePrintJob', () => {

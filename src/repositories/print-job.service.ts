@@ -73,7 +73,12 @@ export class PrintJobService {
     return PrintJobDto.FromDbo(savedPrintJob, savedReceiptPrintJob);
   }
 
-  async listPrintJobs(printerId: string): Promise<PrintJobDto[]> {
+  async listPrintJobs(printerId: string, printTimeFilter?: string): Promise<PrintJobDto[]> {
+    // Validate printTime parameter
+    if (printTimeFilter !== undefined && printTimeFilter !== 'null') {
+      throw new BadRequestException('printTime parameter must be "null" or omitted');
+    }
+
     // Check if printer exists
     const printer = await this.printerRepository.findOne({
       where: { id: printerId },
@@ -83,9 +88,17 @@ export class PrintJobService {
       throw new NotFoundException(`Printer with ID ${printerId} not found`);
     }
 
+    // Build query conditions
+    const queryConditions: any = { printerId };
+    
+    // Add print time filter if specified
+    if (printTimeFilter === 'null') {
+      queryConditions.printTime = null;
+    }
+
     // Get print jobs for the printer
     const printJobs = await this.printJobRepository.find({
-      where: { printerId },
+      where: queryConditions,
       order: { creationTime: 'DESC' },
     });
 
