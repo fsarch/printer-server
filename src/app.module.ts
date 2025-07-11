@@ -9,6 +9,7 @@ import { PrinterCredential } from './database/entities/printer_credential.entity
 import { PrinterType } from './database/entities/printer_type.entity';
 import { ReceiptPrintJob } from './database/entities/receipt_print_job.entity';
 import { PrintersModule } from './controllers/printers.module.js';
+import { PrintJobsModule } from './controllers/print-jobs.module.js';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { PrintersModule } from './controllers/printers.module.js';
     }),
     EventEmitterModule.forRoot(),
     PrintersModule,
+    PrintJobsModule,
   ],
   controllers: [],
   providers: [],
