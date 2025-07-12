@@ -5,19 +5,20 @@ import { PrintJob } from '../database/entities/print_job.entity.js';
 import { ReceiptPrintJob } from '../database/entities/receipt_print_job.entity.js';
 import { Printer } from '../database/entities/printer.entity.js';
 import { PrinterType } from '../database/entities/printer_type.entity.js';
-import { CreatePrintJobDto, PrintJobDto, ReceiptDataDto, UpdatePrintJobDto } from '../models/print-job.dto.js';
+import { 
+  CreatePrintJobDto, 
+  PrintJobDto, 
+  ReceiptDataDto, 
+  UpdatePrintJobDto,
+  AlignmentReceiptDataDto,
+  TextReceiptDataDto,
+  CutReceiptDataDto,
+  NewlineReceiptDataDto
+} from '../models/print-job.dto.js';
 import { PrinterType as PrinterTypeEnum } from '../constants/printer-type.enum.js';
 import { PrintJobType as PrintJobTypeEnum } from '../constants/print-job-type.enum.js';
 import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
-import {
-  AlignmentReceiptDataDto,
-  TextReceiptDataDto,
-  CutReceiptDataDto,
-  NewlineReceiptDataDto,
-  CreatePrintJobDto,
-  PrintJobDto,
-} from '../models/print-job.dto.js';
 
 @Injectable()
 export class PrintJobService {
@@ -72,7 +73,12 @@ export class PrintJobService {
     return PrintJobDto.FromDbo(savedPrintJob, savedReceiptPrintJob);
   }
 
-  async listPrintJobs(printerId: string): Promise<PrintJobDto[]> {
+  async listPrintJobs(printerId: string, printTimeFilter?: string): Promise<PrintJobDto[]> {
+    // Validate printTime parameter
+    if (printTimeFilter !== undefined && printTimeFilter !== 'null') {
+      throw new BadRequestException('printTime parameter must be "null" or omitted');
+    }
+
     // Check if printer exists
     const printer = await this.printerRepository.findOne({
       where: { id: printerId },
@@ -82,9 +88,17 @@ export class PrintJobService {
       throw new NotFoundException(`Printer with ID ${printerId} not found`);
     }
 
+    // Build query conditions
+    const queryConditions: any = { printerId };
+    
+    // Add print time filter if specified
+    if (printTimeFilter === 'null') {
+      queryConditions.printTime = null;
+    }
+
     // Get print jobs for the printer
     const printJobs = await this.printJobRepository.find({
-      where: { printerId },
+      where: queryConditions,
       order: { creationTime: 'DESC' },
     });
 

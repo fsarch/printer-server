@@ -34,6 +34,14 @@ Authorization: Bearer <your-jwt-token>
 | GET | `/v1/printers/:printerId/jobs` | List print jobs for printer | manage_printers | - | PrintJobDto[] |
 | PATCH | `/v1/printers/:printerId/jobs/:jobId` | Update collection/print times | manage_printers | UpdatePrintJobDto | PrintJobDto |
 
+#### Query Parameters for GET `/v1/printers/:printerId/jobs`
+
+| Parameter | Type | Required | Description | Example |
+|-----------|------|----------|-------------|---------|
+| printTime | string | No | Filter by print time status. Use "null" to get jobs without print time. Omit to get all jobs. | `?printTime=null` |
+
+**Note:** The `printTime` parameter only accepts the value `"null"` or can be omitted entirely. Any other value will result in a `400 Bad Request` error.
+
 ## Data Models
 
 ### Printer DTOs
@@ -155,6 +163,7 @@ src/
 | Status Code | Description | Response Body |
 |-------------|-------------|---------------|
 | 400 | Bad Request - Invalid input data | `{ "statusCode": 400, "message": ["validation errors"], "error": "Bad Request" }` |
+| 400 | Bad Request - Invalid printTime parameter | `{ "statusCode": 400, "message": "printTime parameter must be \"null\" or omitted", "error": "Bad Request" }` |
 | 404 | Not Found - Printer does not exist | `{ "statusCode": 404, "message": "Printer not found" }` |
 | 422 | Unprocessable Entity - Business logic validation error | `{ "statusCode": 422, "message": "error details" }` |
 
@@ -224,6 +233,12 @@ Authorization: Bearer <your-jwt-token>
 #### List Print Jobs
 ```bash
 GET /v1/printers/123e4567-e89b-12d3-a456-426614174000/jobs
+Authorization: Bearer <your-jwt-token>
+```
+
+#### List Print Jobs Without Print Time
+```bash
+GET /v1/printers/123e4567-e89b-12d3-a456-426614174000/jobs?printTime=null
 Authorization: Bearer <your-jwt-token>
 ```
 
