@@ -1,6 +1,6 @@
 import { Injectable, Scope, ConsoleLogger } from '@nestjs/common';
 import { isErrorLike, serializeError } from 'serialize-error';
-import pino, { type Logger } from 'pino';
+import { pino, type Logger } from 'pino';
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class PinoLogger extends ConsoleLogger {

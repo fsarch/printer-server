@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 import { getDataType } from './utils/data-type.mapper.js';
-import { PrinterType } from '../../constants/printer-type.enum';
-import { PrintJobType } from '../../constants/print-job-type.enum';
+import { PrinterType } from '../../constants/printer-type.enum.js';
+import { PrintJobType } from '../../constants/print-job-type.enum.js';
 
 export class BaseTables1720373216667 implements MigrationInterface {
   name = 'BaseTables1720373216667';

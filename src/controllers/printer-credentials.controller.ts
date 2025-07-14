@@ -17,15 +17,15 @@ import {
   ApiResponse,
   ApiParam,
 } from '@nestjs/swagger';
-import { PrinterCredentialService } from '../repositories/printer-credential.service';
+import { PrinterCredentialService } from '../repositories/printer-credential.service.js';
 import {
   CreatePrinterCredentialDto,
   PatchPrinterCredentialDto,
   PrinterCredentialDto,
   PrinterCredentialWithTokenDto,
-} from '../models/printer-credential.dto';
-import { Roles } from '../fsarch/uac/decorators/roles.decorator';
-import { Role } from '../fsarch/auth/role.enum';
+} from '../models/printer-credential.dto.js';
+import { Roles } from '../fsarch/uac/decorators/roles.decorator.js';
+import { Role } from '../fsarch/auth/role.enum.js';
 
 @ApiTags('printer-credentials')
 @ApiBearerAuth()

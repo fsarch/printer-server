@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsOptional } from 'class-validator';
-import { PrinterCredential } from '../database/entities/printer_credential.entity';
+import { PrinterCredential } from '../database/entities/printer_credential.entity.js';
 
 export class CreatePrinterCredentialDto {
   @ApiProperty({

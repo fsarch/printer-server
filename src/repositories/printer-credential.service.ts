@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { PrinterCredential } from '../database/entities/printer_credential.entity';
-import { 
-  CreatePrinterCredentialDto, 
-  PatchPrinterCredentialDto 
-} from '../models/printer-credential.dto';
+import { PrinterCredential } from '../database/entities/printer_credential.entity.js';
+import {
+  CreatePrinterCredentialDto,
+  PatchPrinterCredentialDto
+} from '../models/printer-credential.dto.js';
 import { randomBytes } from 'crypto';
 
 @Injectable()
