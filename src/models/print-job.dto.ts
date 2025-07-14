@@ -7,6 +7,7 @@ import {
   ValidateNested,
   IsEnum,
   IsBoolean,
+  IsDateString,
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 import { PrintJob } from '../database/entities/print_job.entity.js';
@@ -150,6 +151,30 @@ export class CreatePrintJobDto {
     ],
   })
   data: ReceiptDataDto | any;
+}
+
+export class UpdatePrintJobDto {
+  @ApiProperty({
+    description: 'Collection time',
+    nullable: true,
+    type: 'string',
+    format: 'date-time',
+    required: false,
+  })
+  @IsOptional()
+  @IsDateString()
+  collectionTime?: string;
+
+  @ApiProperty({
+    description: 'Print time',
+    nullable: true,
+    type: 'string',
+    format: 'date-time',
+    required: false,
+  })
+  @IsOptional()
+  @IsDateString()
+  printTime?: string;
 }
 
 export class PrintJobDto {
