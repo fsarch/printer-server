@@ -133,7 +133,8 @@ export class QrReceiptDataDto {
   $type: 'qr-code';
 
   @ApiProperty({
-    description: 'QR code value',
+    description: 'QR code value - can be URL, text, or any string data to encode in the QR code',
+    example: 'https://example.com/receipt/123',
   })
   @IsString()
   value: string;
