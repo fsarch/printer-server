@@ -81,8 +81,57 @@ Authorization: Bearer <your-jwt-token>
 #### CreatePrintJobDto
 ```typescript
 {
-  externalId?: string;     // String (max 256 chars) - Optional
-  data: ReceiptDataDto;    // Receipt data object - Required
+  externalId?: string;        // String (max 256 chars) - Optional
+  data: ReceiptDataDto[];     // Array of receipt data objects - Required
+}
+```
+
+#### Receipt Data Types
+
+The `data` field accepts an array of receipt data objects. Each object must have a `$type` field that determines its structure:
+
+##### TextReceiptDataDto
+```typescript
+{
+  $type: "text";
+  value: string;              // Text content to print
+  format?: {                  // Optional formatting
+    font?: "a" | "b" | "c";   // Font type
+    bold?: boolean;           // Bold text
+    italic?: boolean;         // Italic text
+    underline?: boolean | 2;  // Underline (true/false/2 for double)
+  };
+}
+```
+
+##### QrReceiptDataDto (New)
+```typescript
+{
+  $type: "qr-code";
+  value: string;              // QR code data (URL, text, etc.)
+}
+```
+
+##### AlignmentReceiptDataDto
+```typescript
+{
+  $type: "alignment";
+  alignment: "left" | "center" | "right";  // Text alignment
+  children: ReceiptDataDto[]; // Nested receipt data objects
+}
+```
+
+##### CutReceiptDataDto
+```typescript
+{
+  $type: "cut";               // Paper cut instruction (no additional properties)
+}
+```
+
+##### NewlineReceiptDataDto
+```typescript
+{
+  $type: "newline";           // Line break instruction (no additional properties)
 }
 ```
 
@@ -223,10 +272,85 @@ Authorization: Bearer <your-jwt-token>
 
 {
   "externalId": "JOB-001",
-  "data": {
-    "$type": "text",
-    "value": "Hello World"
-  }
+  "data": [
+    {
+      "$type": "text",
+      "value": "Hello World"
+    }
+  ]
+}
+```
+
+#### Create a Print Job with QR Code
+```bash
+POST /v1/printers/123e4567-e89b-12d3-a456-426614174000/jobs
+Content-Type: application/json
+Authorization: Bearer <your-jwt-token>
+
+{
+  "externalId": "JOB-002",
+  "data": [
+    {
+      "$type": "text",
+      "value": "Scan the QR code below:",
+      "format": { "bold": true }
+    },
+    {
+      "$type": "newline"
+    },
+    {
+      "$type": "qr-code",
+      "value": "https://example.com/receipt/123"
+    },
+    {
+      "$type": "cut"
+    }
+  ]
+}
+```
+
+#### Create a Complex Print Job
+```bash
+POST /v1/printers/123e4567-e89b-12d3-a456-426614174000/jobs
+Content-Type: application/json
+Authorization: Bearer <your-jwt-token>
+
+{
+  "externalId": "JOB-003",
+  "data": [
+    {
+      "$type": "alignment",
+      "alignment": "center",
+      "children": [
+        {
+          "$type": "text",
+          "value": "RECEIPT",
+          "format": { "bold": true, "font": "b" }
+        }
+      ]
+    },
+    {
+      "$type": "newline"
+    },
+    {
+      "$type": "text",
+      "value": "Item: Product ABC"
+    },
+    {
+      "$type": "text",
+      "value": "Price: $19.99"
+    },
+    {
+      "$type": "newline"
+    },
+    {
+      "$type": "qr-code",
+      "value": "https://store.example.com/receipt/abc123"
+    },
+    {
+      "$type": "cut"
+    }
+  ]
 }
 ```
 

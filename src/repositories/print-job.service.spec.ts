@@ -72,7 +72,7 @@ describe('PrintJobService', () => {
 
       await expect(
         service.createPrintJob('non-existent-printer-id', {
-          data: { $type: 'text', value: 'Hello' },
+          data: [{ $type: 'text', value: 'Hello' }],
         }),
       ).rejects.toThrow(NotFoundException);
     });
@@ -85,7 +85,7 @@ describe('PrintJobService', () => {
 
       await expect(
         service.createPrintJob('printer-id', {
-          data: { $type: 'text', value: 'Hello' },
+          data: [{ $type: 'text', value: 'Hello' }],
         }),
       ).rejects.toThrow(NotImplementedException);
     });
@@ -108,7 +108,7 @@ describe('PrintJobService', () => {
       };
       const mockReceiptPrintJob = {
         id: 'job-id',
-        data: { $type: 'text', value: 'Hello' },
+        data: [{ $type: 'text', value: 'Hello' }],
       };
 
       mockPrinterRepository.findOne.mockResolvedValue(mockPrinter);
@@ -118,12 +118,48 @@ describe('PrintJobService', () => {
       mockReceiptPrintJobRepository.save.mockResolvedValue(mockReceiptPrintJob);
 
       const result = await service.createPrintJob(printerId, {
-        data: { $type: 'text', value: 'Hello' },
+        data: [{ $type: 'text', value: 'Hello' }],
       });
 
       expect(result).toBeDefined();
       expect(result.printerId).toBe(printerId);
-      expect(result.data).toEqual({ $type: 'text', value: 'Hello' });
+      expect(result.data).toEqual([{ $type: 'text', value: 'Hello' }]);
+    });
+
+    it('should create print job for receipt printer with valid qr-code data', async () => {
+      const printerId = 'printer-id';
+      const mockPrinter = {
+        id: printerId,
+        printerTypeId: PrinterType.RECEIPT,
+      };
+      const mockPrintJob = {
+        id: 'job-id',
+        printerId,
+        printJobTypeId: PrintJobType.RECEIPT,
+        externalId: null,
+        collectionPrinterCredentialId: null,
+        collectionTime: null,
+        printTime: null,
+        creationTime: new Date(),
+      };
+      const mockReceiptPrintJob = {
+        id: 'job-id',
+        data: [{ $type: 'qr-code', value: 'https://example.com' }],
+      };
+
+      mockPrinterRepository.findOne.mockResolvedValue(mockPrinter);
+      mockPrintJobRepository.create.mockReturnValue(mockPrintJob);
+      mockPrintJobRepository.save.mockResolvedValue(mockPrintJob);
+      mockReceiptPrintJobRepository.create.mockReturnValue(mockReceiptPrintJob);
+      mockReceiptPrintJobRepository.save.mockResolvedValue(mockReceiptPrintJob);
+
+      const result = await service.createPrintJob(printerId, {
+        data: [{ $type: 'qr-code', value: 'https://example.com' }],
+      });
+
+      expect(result).toBeDefined();
+      expect(result.printerId).toBe(printerId);
+      expect(result.data).toEqual([{ $type: 'qr-code', value: 'https://example.com' }]);
     });
   });
 

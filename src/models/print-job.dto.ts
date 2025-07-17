@@ -124,12 +124,29 @@ export class NewlineReceiptDataDto {
   $type: 'newline';
 }
 
+export class QrReceiptDataDto {
+  @ApiProperty({
+    description: 'Type discriminator',
+    enum: ['qr-code'],
+  })
+  @IsString()
+  $type: 'qr-code';
+
+  @ApiProperty({
+    description: 'QR code value - can be URL, text, or any string data to encode in the QR code',
+    example: 'https://example.com/receipt/123',
+  })
+  @IsString()
+  value: string;
+}
+
 // Union type for receipt data (handled at validation level)
 export type ReceiptDataDto =
   | AlignmentReceiptDataDto
   | TextReceiptDataDto
   | CutReceiptDataDto
-  | NewlineReceiptDataDto;
+  | NewlineReceiptDataDto
+  | QrReceiptDataDto;
 
 export class CreatePrintJobDto {
   @ApiProperty({
@@ -143,14 +160,19 @@ export class CreatePrintJobDto {
 
   @ApiProperty({
     description: 'Print job data - for receipt printers, must match receipt data schema',
-    oneOf: [
-      { $ref: '#/components/schemas/AlignmentReceiptDataDto' },
-      { $ref: '#/components/schemas/TextReceiptDataDto' },
-      { $ref: '#/components/schemas/CutReceiptDataDto' },
-      { $ref: '#/components/schemas/NewlineReceiptDataDto' },
-    ],
+    type: 'array',
+    items: {
+      oneOf: [
+        { $ref: '#/components/schemas/AlignmentReceiptDataDto' },
+        { $ref: '#/components/schemas/TextReceiptDataDto' },
+        { $ref: '#/components/schemas/CutReceiptDataDto' },
+        { $ref: '#/components/schemas/NewlineReceiptDataDto' },
+        { $ref: '#/components/schemas/QrReceiptDataDto' },
+      ],
+    },
   })
-  data: ReceiptDataDto | any;
+  @IsArray()
+  data: ReceiptDataDto[];
 }
 
 export class UpdatePrintJobDto {
