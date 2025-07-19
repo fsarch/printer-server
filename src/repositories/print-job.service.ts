@@ -1,14 +1,12 @@
 import { Injectable, NotFoundException, NotImplementedException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { PrintJob } from '../database/entities/print_job.entity.js';
 import { ReceiptPrintJob } from '../database/entities/receipt_print_job.entity.js';
 import { Printer } from '../database/entities/printer.entity.js';
-import { PrinterType } from '../database/entities/printer_type.entity.js';
-import { 
-  CreatePrintJobDto, 
-  PrintJobDto, 
-  ReceiptDataDto, 
+import {
+  CreatePrintJobDto,
+  PrintJobDto,
   UpdatePrintJobDto,
   AlignmentReceiptDataDto,
   TextReceiptDataDto,
@@ -20,6 +18,7 @@ import { PrinterType as PrinterTypeEnum } from '../constants/printer-type.enum.j
 import { PrintJobType as PrintJobTypeEnum } from '../constants/print-job-type.enum.js';
 import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
+import type { FindOptionsWhere } from 'typeorm';
 
 @Injectable()
 export class PrintJobService {
@@ -90,11 +89,11 @@ export class PrintJobService {
     }
 
     // Build query conditions
-    const queryConditions: any = { printerId };
-    
+    const queryConditions: FindOptionsWhere<PrintJob> = { printerId };
+
     // Add print time filter if specified
     if (printTimeFilter === 'null') {
-      queryConditions.printTime = null;
+      queryConditions.printTime = IsNull();
     }
 
     // Get print jobs for the printer
@@ -142,11 +141,11 @@ export class PrintJobService {
 
     // Update only the provided fields
     const updateData: Partial<PrintJob> = {};
-    
+
     if (updatePrintJobDto.collectionTime !== undefined) {
       updateData.collectionTime = updatePrintJobDto.collectionTime;
     }
-    
+
     if (updatePrintJobDto.printTime !== undefined) {
       updateData.printTime = updatePrintJobDto.printTime;
     }
