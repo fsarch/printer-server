@@ -12,7 +12,7 @@ import {
   TextReceiptDataDto,
   CutReceiptDataDto,
   NewlineReceiptDataDto,
-  QrReceiptDataDto
+  QrReceiptDataDto, LineReceiptDataDto
 } from '../models/print-job.dto.js';
 import { PrinterType as PrinterTypeEnum } from '../constants/printer-type.enum.js';
 import { PrintJobType as PrintJobTypeEnum } from '../constants/print-job-type.enum.js';
@@ -206,6 +206,9 @@ export class PrintJobService {
         break;
       case 'qr-code':
         dtoClass = QrReceiptDataDto;
+        break;
+      case 'line':
+        dtoClass = LineReceiptDataDto;
         break;
       default:
         throw new BadRequestException(`Invalid $type: ${data.$type}. Must be one of: alignment, text, cut, newline, qr-code`);

@@ -8,6 +8,7 @@ import {
   IsEnum,
   IsBoolean,
   IsDateString,
+  IsPositive,
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 import { PrintJob } from '../database/entities/print_job.entity.js';
@@ -38,7 +39,7 @@ export class AlignmentReceiptDataDto {
   children: any[];
 }
 
-export class TextFormatDto {
+export class LineFormatDto {
   @ApiProperty({
     description: 'Font type',
     enum: ['a', 'b', 'c'],
@@ -47,6 +48,43 @@ export class TextFormatDto {
   @IsOptional()
   @IsEnum(['a', 'b', 'c'])
   font?: 'a' | 'b' | 'c';
+}
+
+export class LineReceiptDataDto {
+  @ApiProperty({
+    description: 'Type discriminator',
+    enum: ['line'],
+  })
+  @IsString()
+  $type: 'line';
+
+  @ApiProperty({
+    description: 'Text formatting options',
+    required: false,
+  })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => LineFormatDto)
+  format?: LineFormatDto;
+
+  @ApiProperty({
+    description: 'Child elements',
+    type: 'array',
+    items: { type: 'object' },
+  })
+  @IsArray()
+  children: any[];
+}
+
+export class TextFormatDto {
+  @ApiProperty({
+    description: 'Font size',
+    required: false,
+    type: 'number',
+  })
+  @IsOptional()
+  @IsPositive()
+  size?: number;
 
   @ApiProperty({
     description: 'Bold formatting',
@@ -146,7 +184,8 @@ export type ReceiptDataDto =
   | TextReceiptDataDto
   | CutReceiptDataDto
   | NewlineReceiptDataDto
-  | QrReceiptDataDto;
+  | QrReceiptDataDto
+  | LineReceiptDataDto;
 
 export class CreatePrintJobDto {
   @ApiProperty({
@@ -168,6 +207,7 @@ export class CreatePrintJobDto {
         { $ref: '#/components/schemas/CutReceiptDataDto' },
         { $ref: '#/components/schemas/NewlineReceiptDataDto' },
         { $ref: '#/components/schemas/QrReceiptDataDto' },
+        { $ref: '#/components/schemas/LineReceiptDataDto' },
       ],
     },
   })
