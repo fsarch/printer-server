@@ -15,11 +15,18 @@ import {
   ApiOperation,
   ApiResponse,
   ApiQuery,
+  ApiExtraModels,
 } from '@nestjs/swagger';
 import { PrintJobService } from '../repositories/print-job.service.js';
 import {
+  AlignmentReceiptDataDto,
+  CutReceiptDataDto,
   CreatePrintJobDto,
+  LineReceiptDataDto,
+  NewlineReceiptDataDto,
   PrintJobDto,
+  QrReceiptDataDto,
+  TextReceiptDataDto,
   UpdatePrintJobDto,
 } from '../models/print-job.dto.js';
 import { Roles } from '../fsarch/uac/decorators/roles.decorator.js';
@@ -27,6 +34,14 @@ import { Role } from '../fsarch/auth/role.enum.js';
 
 @ApiTags('print-jobs')
 @ApiBearerAuth()
+@ApiExtraModels(
+  AlignmentReceiptDataDto,
+  TextReceiptDataDto,
+  CutReceiptDataDto,
+  NewlineReceiptDataDto,
+  QrReceiptDataDto,
+  LineReceiptDataDto,
+)
 @Controller({ path: 'printers/:printerId/jobs', version: '1' })
 export class PrintJobsController {
   constructor(
