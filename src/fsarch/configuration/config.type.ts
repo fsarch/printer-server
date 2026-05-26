@@ -2,6 +2,7 @@ export type ConfigType = {
   auth: ConfigAuthType;
   uac: ConfigStaticUacType;
   database: ConfigDatabaseType;
+  event_bus?: ConfigEventBusType;
 };
 
 export type ConfigAuthType = ConfigStaticAuthType | ConfigJwtJwkAuthType;
@@ -70,3 +71,42 @@ type ConfigCockroachdbDatabaseType = {
         };
   };
 };
+
+export type ConfigEventBusType = {
+  channel_prefix: string;
+  connection:
+    | ConfigEventBusPostgresConnectionType
+    | ConfigEventBusPostgresDatabaseConnectionType;
+};
+
+type ConfigEventBusPostgresDatabaseConnectionType = {
+  type: 'postgres-database';
+};
+
+type ConfigEventBusPostgresConnectionType = {
+  type: 'postgres';
+  host: string;
+  username: string;
+  password?: string;
+  database: string;
+  port?: number;
+  ssl?: {
+    rejectUnauthorized?: boolean;
+    ca?:
+      | string
+      | {
+          path: string;
+        };
+    cert?:
+      | string
+      | {
+          path: string;
+        };
+    key?:
+      | string
+      | {
+          path: string;
+        };
+  };
+};
+

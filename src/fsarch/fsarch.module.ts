@@ -6,6 +6,7 @@ import {
   DatabaseModuleOptions,
 } from './database/database.module.js';
 import { AuthModule } from './auth/auth.module.js';
+import { EventBusModule } from './event-bus/event-bus.module.js';
 
 type FSArchOptions = {
   auth?: {};
@@ -13,6 +14,7 @@ type FSArchOptions = {
     roles: Array<string>;
   };
   database?: DatabaseModuleOptions;
+  eventBus?: {};
 };
 
 @Global()
@@ -34,6 +36,11 @@ export class FsarchModule {
 
     if (options.database) {
       imports.push(DatabaseModule.register(options.database));
+    }
+
+    if (options.eventBus) {
+      imports.push(EventBusModule.register());
+      exports.push(EventBusModule);
     }
 
     return {
