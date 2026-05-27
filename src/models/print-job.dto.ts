@@ -300,8 +300,19 @@ export class PrintJobDto {
   @ApiProperty({
     description: 'Receipt data (only present for receipt print jobs)',
     nullable: true,
+    type: 'array',
+    items: {
+      oneOf: [
+        { $ref: '#/components/schemas/AlignmentReceiptDataDto' },
+        { $ref: '#/components/schemas/TextReceiptDataDto' },
+        { $ref: '#/components/schemas/CutReceiptDataDto' },
+        { $ref: '#/components/schemas/NewlineReceiptDataDto' },
+        { $ref: '#/components/schemas/QrReceiptDataDto' },
+        { $ref: '#/components/schemas/LineReceiptDataDto' },
+      ],
+    },
   })
-  data?: any;
+  data?: ReceiptDataDto[];
 
   static FromDbo(printJob: PrintJob, receiptData?: ReceiptPrintJob): PrintJobDto {
     return {
@@ -313,7 +324,7 @@ export class PrintJobDto {
       collectionTime: printJob.collectionTime,
       printTime: printJob.printTime,
       creationTime: printJob.creationTime,
-      data: receiptData?.data,
+      data: receiptData?.data as ReceiptDataDto[] | undefined,
     };
   }
 }
