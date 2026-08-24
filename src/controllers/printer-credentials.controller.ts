@@ -24,8 +24,8 @@ import {
   PrinterCredentialDto,
   PrinterCredentialWithTokenDto,
 } from '../models/printer-credential.dto.js';
-import { Roles } from '../fsarch/uac/decorators/roles.decorator.js';
-import { Role } from '../fsarch/auth/role.enum.js';
+import { Roles } from '@fsarch/server/uac';
+import { Role } from '../constants/role.enum.js';
 
 @ApiTags('printer-credentials')
 @ApiBearerAuth()

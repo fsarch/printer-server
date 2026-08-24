@@ -1,5 +1,9 @@
 import Joi from 'joi';
 
+// Kept locally: @fsarch/server does not export this validator publicly.
+// Used only to validate the `database` config section when the event bus
+// is configured to reuse it (event_bus.connection.type=postgres-database).
+
 export const SQLITE_DATABASE_CONFIG_VALIDATOR = Joi.object({
   type: Joi.string().valid('sqlite').required(),
   database: Joi.string().required(),

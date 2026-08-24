@@ -3,13 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import { DiscoveryModule } from '@nestjs/core';
 import { readFile } from 'node:fs/promises';
 import { type ClientConfig } from 'pg';
-import { ModuleConfiguration } from '../configuration/module/module-configuration.module.js';
-import { ModuleConfigurationService } from '../configuration/module/module-configuration.service.js';
-import {
-  ConfigDatabaseType,
-  ConfigEventBusType,
-} from '../configuration/config.type.js';
-import { DATABASE_CONFIG_VALIDATOR } from '../database/database-config.validator.js';
+import { ModuleConfiguration, ModuleConfigurationService } from '@fsarch/server/configuration';
+import { ConfigDatabaseType, ConfigEventBusType } from './config.type.js';
+import { DATABASE_CONFIG_VALIDATOR } from './database-config.validator.js';
 import { EVENT_BUS_CONFIG_VALIDATOR } from './event-bus-config.validator.js';
 import {
   EVENT_BUS,

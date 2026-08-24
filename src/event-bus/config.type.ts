@@ -1,40 +1,5 @@
-export type ConfigType = {
-  auth: ConfigAuthType;
-  uac: ConfigStaticUacType;
-  database: ConfigDatabaseType;
-  event_bus?: ConfigEventBusType;
-};
-
-export type ConfigAuthType = ConfigStaticAuthType | ConfigJwtJwkAuthType;
-
-export type ConfigStaticAuthType = {
-  type: 'static';
-  secret: string;
-  users: Array<ConfigAuthUserType>;
-};
-
-export type ConfigJwtJwkAuthType = {
-  type: 'jwt-jwk';
-  jwkUrl: string;
-};
-
-type ConfigAuthUserType = {
-  id: string;
-  username: string;
-  password: string;
-};
-
-export type ConfigUacType = ConfigStaticUacType;
-
-export type ConfigStaticUacType = {
-  type: 'static';
-  users: Array<ConfigUacUserType>;
-};
-
-type ConfigUacUserType = {
-  user_id: string;
-  permissions: Array<string>;
-};
+// Kept locally: @fsarch/server does not export its config.type.ts publicly.
+// Slimmed down to only what the event bus needs.
 
 export type ConfigDatabaseType =
   | ConfigSqliteDatabaseType
@@ -109,4 +74,3 @@ type ConfigEventBusPostgresConnectionType = {
         };
   };
 };
-

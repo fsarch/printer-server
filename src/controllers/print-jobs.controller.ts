@@ -29,8 +29,8 @@ import {
   TextReceiptDataDto,
   UpdatePrintJobDto,
 } from '../models/print-job.dto.js';
-import { Roles } from '../fsarch/uac/decorators/roles.decorator.js';
-import { Role } from '../fsarch/auth/role.enum.js';
+import { Roles } from '@fsarch/server/uac';
+import { Role } from '../constants/role.enum.js';
 
 @ApiTags('print-jobs')
 @ApiBearerAuth()
