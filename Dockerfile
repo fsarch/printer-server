@@ -1,5 +1,5 @@
 # Base
-FROM node:24.14.1-trixie-slim AS base
+FROM node:24.20.0-trixie-slim AS base
 
 ENV PORT 8080
 
@@ -37,6 +37,7 @@ RUN npm run build
 FROM base
 
 ENV NODE_ENV production
+ENV NODE_OPTIONS="--import @fsarch/server/register"
 
 EXPOSE 8080
 
