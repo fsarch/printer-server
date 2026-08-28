@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -11,12 +12,12 @@ describe('PrinterCredentialService', () => {
   let repository: Repository<PrinterCredential>;
 
   const mockRepository = {
-    create: jest.fn(),
-    save: jest.fn(),
-    findOne: jest.fn(),
-    find: jest.fn(),
-    update: jest.fn(),
-    softDelete: jest.fn(),
+    create: vi.fn(),
+    save: vi.fn(),
+    findOne: vi.fn(),
+    find: vi.fn(),
+    update: vi.fn(),
+    softDelete: vi.fn(),
   };
 
   beforeEach(async () => {
@@ -35,7 +36,7 @@ describe('PrinterCredentialService', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should be defined', () => {

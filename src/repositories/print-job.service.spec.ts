@@ -1,6 +1,7 @@
+import { vi } from 'vitest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrintJobService } from './print-job.service';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { PrintJob } from '../database/entities/print_job.entity';
 import { ReceiptPrintJob } from '../database/entities/receipt_print_job.entity';
@@ -16,21 +17,21 @@ describe('PrintJobService', () => {
   let printerRepository: Repository<Printer>;
 
   const mockPrintJobRepository = {
-    create: jest.fn(),
-    save: jest.fn(),
-    find: jest.fn(),
-    findOne: jest.fn(),
-    update: jest.fn(),
+    create: vi.fn(),
+    save: vi.fn(),
+    find: vi.fn(),
+    findOne: vi.fn(),
+    update: vi.fn(),
   };
 
   const mockReceiptPrintJobRepository = {
-    create: jest.fn(),
-    save: jest.fn(),
-    findOne: jest.fn(),
+    create: vi.fn(),
+    save: vi.fn(),
+    findOne: vi.fn(),
   };
 
   const mockPrinterRepository = {
-    findOne: jest.fn(),
+    findOne: vi.fn(),
   };
 
   beforeEach(async () => {
@@ -59,7 +60,7 @@ describe('PrintJobService', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -231,7 +232,7 @@ describe('PrintJobService', () => {
       const result = await service.listPrintJobs(printerId, 'null');
 
       expect(mockPrintJobRepository.find).toHaveBeenCalledWith({
-        where: { printerId, printTime: null },
+        where: { printerId, printTime: IsNull() },
         order: { creationTime: 'DESC' },
       });
       expect(result).toHaveLength(1);

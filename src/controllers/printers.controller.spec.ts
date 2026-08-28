@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrintersController } from './printers.controller';
 import { PrinterService } from '../repositories/printer.service';
@@ -12,11 +13,11 @@ describe('PrintersController', () => {
   let service: PrinterService;
 
   const mockPrinterService = {
-    CreatePrinter: jest.fn(),
-    GetById: jest.fn(),
-    ListPrinters: jest.fn(),
-    UpdatePrinter: jest.fn(),
-    DeleteById: jest.fn(),
+    CreatePrinter: vi.fn(),
+    GetById: vi.fn(),
+    ListPrinters: vi.fn(),
+    UpdatePrinter: vi.fn(),
+    DeleteById: vi.fn(),
   };
 
   beforeEach(async () => {
@@ -35,7 +36,7 @@ describe('PrintersController', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should be defined', () => {

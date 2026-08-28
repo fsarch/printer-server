@@ -11,6 +11,9 @@
     "start:dev": "nest start --watch | pino-pretty",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:cov": "vitest run --coverage",
     "postversion": "git push && git push --tags"
   },
   "repository": {
@@ -44,39 +47,23 @@
   "devDependencies": {
     "@nestjs/cli": "^12.0.0",
     "@nestjs/testing": "^12.0.1",
-    "@types/jest": "^30.0.0",
+    "@swc/core": "^1.16.1",
     "@types/node": "^24.13.3",
     "@types/supertest": "^7.2.1",
     "@typescript-eslint/eslint-plugin": "^8.68.0",
     "@typescript-eslint/parser": "^8.68.0",
+    "@vitest/coverage-v8": "^4.1.11",
     "eslint": "^10.9.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.6",
-    "jest": "^30.4.2",
     "prettier": "^3.9.6",
     "source-map-support": "^0.5.21",
     "supertest": "^7.2.2",
-    "ts-jest": "^29.4.12",
     "ts-loader": "^9.6.2",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.9.3"
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "typescript": "^6.0.3",
+    "unplugin-swc": "^1.5.11",
+    "vitest": "^4.1.11"
   }
 }
