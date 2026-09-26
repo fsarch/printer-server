@@ -1,15 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform, Type } from 'class-transformer';
 import {
-  IsString,
-  IsOptional,
   IsArray,
-  ValidateNested,
-  IsEnum,
   IsBoolean,
   IsDateString,
+  IsEnum,
+  IsOptional,
   IsPositive,
+  IsString,
+  ValidateNested,
 } from 'class-validator';
-import { Type, Transform } from 'class-transformer';
 import { PrintJob } from '../database/entities/print_job.entity.js';
 import { ReceiptPrintJob } from '../database/entities/receipt_print_job.entity.js';
 
@@ -104,10 +104,7 @@ export class TextFormatDto {
   @ApiProperty({
     description: 'Underline formatting',
     required: false,
-    oneOf: [
-      { type: 'boolean' },
-      { type: 'number', enum: [2] },
-    ],
+    oneOf: [{ type: 'boolean' }, { type: 'number', enum: [2] }],
   })
   @IsOptional()
   @Transform(({ value }) => {
@@ -170,7 +167,8 @@ export class QrReceiptDataDto {
   $type: 'qr-code';
 
   @ApiProperty({
-    description: 'QR code value - can be URL, text, or any string data to encode in the QR code',
+    description:
+      'QR code value - can be URL, text, or any string data to encode in the QR code',
     example: 'https://example.com/receipt/123',
   })
   @IsString()
@@ -197,7 +195,8 @@ export class CreatePrintJobDto {
   externalId?: string;
 
   @ApiProperty({
-    description: 'Print job data - for receipt printers, must match receipt data schema',
+    description:
+      'Print job data - for receipt printers, must match receipt data schema',
     type: 'array',
     items: {
       oneOf: [
@@ -314,7 +313,10 @@ export class PrintJobDto {
   })
   data?: ReceiptDataDto[];
 
-  static FromDbo(printJob: PrintJob, receiptData?: ReceiptPrintJob): PrintJobDto {
+  static FromDbo(
+    printJob: PrintJob,
+    receiptData?: ReceiptPrintJob,
+  ): PrintJobDto {
     return {
       id: printJob.id,
       printerId: printJob.printerId,

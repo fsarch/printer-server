@@ -1,17 +1,16 @@
-import { vi } from 'vitest';
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrinterCredentialsController } from './printer-credentials.controller';
-import { PrinterCredentialService } from '../repositories/printer-credential.service';
+import { vi } from 'vitest';
 import {
   CreatePrinterCredentialDto,
   PatchPrinterCredentialDto,
   PrinterCredentialDto,
   PrinterCredentialWithTokenDto,
 } from '../models/printer-credential.dto';
+import { PrinterCredentialService } from '../repositories/printer-credential.service';
+import { PrinterCredentialsController } from './printer-credentials.controller';
 
 describe('PrinterCredentialsController', () => {
   let controller: PrinterCredentialsController;
-  let service: PrinterCredentialService;
 
   const mockPrinterCredentialService = {
     CreatePrinterCredential: vi.fn(),
@@ -32,8 +31,9 @@ describe('PrinterCredentialsController', () => {
       ],
     }).compile();
 
-    controller = module.get<PrinterCredentialsController>(PrinterCredentialsController);
-    service = module.get<PrinterCredentialService>(PrinterCredentialService);
+    controller = module.get<PrinterCredentialsController>(
+      PrinterCredentialsController,
+    );
   });
 
   afterEach(() => {
@@ -62,15 +62,21 @@ describe('PrinterCredentialsController', () => {
         deletionTime: null,
       };
 
-      mockPrinterCredentialService.CreatePrinterCredential.mockResolvedValue(mockCredential);
+      mockPrinterCredentialService.CreatePrinterCredential.mockResolvedValue(
+        mockCredential,
+      );
 
-      const result = await controller.create(printerId, createPrinterCredentialDto);
-
-      expect(mockPrinterCredentialService.CreatePrinterCredential).toHaveBeenCalledWith(
+      const result = await controller.create(
         printerId,
         createPrinterCredentialDto,
       );
-      expect(result).toEqual(PrinterCredentialWithTokenDto.FromDbo(mockCredential));
+
+      expect(
+        mockPrinterCredentialService.CreatePrinterCredential,
+      ).toHaveBeenCalledWith(printerId, createPrinterCredentialDto);
+      expect(result).toEqual(
+        PrinterCredentialWithTokenDto.FromDbo(mockCredential),
+      );
       expect(result.token).toBe('secure-generated-token');
     });
   });
@@ -99,13 +105,19 @@ describe('PrinterCredentialsController', () => {
         },
       ];
 
-      mockPrinterCredentialService.ListPrinterCredentials.mockResolvedValue(mockCredentials);
+      mockPrinterCredentialService.ListPrinterCredentials.mockResolvedValue(
+        mockCredentials,
+      );
 
       const result = await controller.findAll(printerId);
 
-      expect(mockPrinterCredentialService.ListPrinterCredentials).toHaveBeenCalledWith(printerId);
+      expect(
+        mockPrinterCredentialService.ListPrinterCredentials,
+      ).toHaveBeenCalledWith(printerId);
       expect(result).toEqual(
-        mockCredentials.map((credential) => PrinterCredentialDto.FromDbo(credential)),
+        mockCredentials.map((credential) =>
+          PrinterCredentialDto.FromDbo(credential),
+        ),
       );
       // Ensure tokens are not included
       result.forEach((credential) => {
@@ -132,7 +144,10 @@ describe('PrinterCredentialsController', () => {
 
       const result = await controller.findOne(printerId, credentialId);
 
-      expect(mockPrinterCredentialService.GetById).toHaveBeenCalledWith(credentialId, printerId);
+      expect(mockPrinterCredentialService.GetById).toHaveBeenCalledWith(
+        credentialId,
+        printerId,
+      );
       expect(result).toEqual(PrinterCredentialDto.FromDbo(mockCredential));
       expect(result).not.toHaveProperty('token');
     });
@@ -156,11 +171,19 @@ describe('PrinterCredentialsController', () => {
         deletionTime: null,
       };
 
-      mockPrinterCredentialService.UpdatePrinterCredential.mockResolvedValue(updatedCredential);
+      mockPrinterCredentialService.UpdatePrinterCredential.mockResolvedValue(
+        updatedCredential,
+      );
 
-      const result = await controller.update(printerId, credentialId, patchPrinterCredentialDto);
+      const result = await controller.update(
+        printerId,
+        credentialId,
+        patchPrinterCredentialDto,
+      );
 
-      expect(mockPrinterCredentialService.UpdatePrinterCredential).toHaveBeenCalledWith(
+      expect(
+        mockPrinterCredentialService.UpdatePrinterCredential,
+      ).toHaveBeenCalledWith(
         credentialId,
         printerId,
         patchPrinterCredentialDto,

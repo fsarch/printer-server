@@ -1,19 +1,22 @@
+import { readFile } from 'node:fs/promises';
+import {
+  ModuleConfiguration,
+  ModuleConfigurationService,
+} from '@fsarch/server/configuration';
 import { DynamicModule, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DiscoveryModule } from '@nestjs/core';
-import { readFile } from 'node:fs/promises';
 import { type ClientConfig } from 'pg';
-import { ModuleConfiguration, ModuleConfigurationService } from '@fsarch/server/configuration';
 import { ConfigDatabaseType, ConfigEventBusType } from './config.type.js';
 import { DATABASE_CONFIG_VALIDATOR } from './database-config.validator.js';
-import { EVENT_BUS_CONFIG_VALIDATOR } from './event-bus-config.validator.js';
 import {
   EVENT_BUS,
   EVENT_BUS_CONFIG,
   EVENT_BUS_POSTGRES_CONFIG,
 } from './event-bus.constants.js';
-import { EventPublisherService } from './event-publisher.service.js';
+import { EVENT_BUS_CONFIG_VALIDATOR } from './event-bus-config.validator.js';
 import { EventListenerRegistryService } from './event-listener-registry.service.js';
+import { EventPublisherService } from './event-publisher.service.js';
 import { PostgresEventBusService } from './postgres/postgres-event-bus.service.js';
 
 @Module({})
@@ -77,7 +80,9 @@ function getPostgresConnectionFromDatabaseConfig(
     key?: string | { path: string };
   };
 } {
-  const databaseConfig = configService.get('database') as ConfigDatabaseType | undefined;
+  const databaseConfig = configService.get('database') as
+    | ConfigDatabaseType
+    | undefined;
 
   if (!databaseConfig) {
     throw new Error(
@@ -109,21 +114,19 @@ function getPostgresConnectionFromDatabaseConfig(
   };
 }
 
-async function toClientConfig(
-  connection: {
-    host: string;
-    username: string;
-    password?: string;
-    database: string;
-    port?: number;
-    ssl?: {
-      rejectUnauthorized?: boolean;
-      ca?: string | { path: string };
-      cert?: string | { path: string };
-      key?: string | { path: string };
-    };
-  },
-): Promise<ClientConfig> {
+async function toClientConfig(connection: {
+  host: string;
+  username: string;
+  password?: string;
+  database: string;
+  port?: number;
+  ssl?: {
+    rejectUnauthorized?: boolean;
+    ca?: string | { path: string };
+    cert?: string | { path: string };
+    key?: string | { path: string };
+  };
+}): Promise<ClientConfig> {
   const sslOptions: Partial<{
     rejectUnauthorized: boolean;
     ca: string | Buffer;
@@ -167,4 +170,3 @@ async function toClientConfig(
     ssl: connection.ssl ? sslOptions : undefined,
   };
 }
-

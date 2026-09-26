@@ -384,8 +384,8 @@ Authorization: Bearer <your-jwt-token>
 
 Run the tests with:
 ```bash
-npm test -- src/repositories/printer.service.spec.ts
-npm test -- src/controllers/printers.controller.spec.ts
+pnpm test -- src/repositories/printer.service.spec.ts
+pnpm test -- src/controllers/printers.controller.spec.ts
 ```
 
 ## Swagger Documentation

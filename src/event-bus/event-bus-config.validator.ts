@@ -43,4 +43,3 @@ export const EVENT_BUS_CONFIG_VALIDATOR = Joi.object({
     EVENT_BUS_CONNECTION_POSTGRES_DATABASE_VALIDATOR,
   ).required(),
 });
-

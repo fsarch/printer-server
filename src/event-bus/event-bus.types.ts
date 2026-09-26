@@ -20,4 +20,3 @@ export interface EventBusService {
     handler: EventListenerHandler<T>,
   ): Promise<EventSubscription>;
 }
-

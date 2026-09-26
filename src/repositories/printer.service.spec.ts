@@ -1,15 +1,13 @@
-import { vi } from 'vitest';
+import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { NotFoundException } from '@nestjs/common';
-import { PrinterService } from './printer.service';
+import { vi } from 'vitest';
 import { Printer } from '../database/entities/printer.entity';
 import { CreatePrinterDto, PatchPrinterDto } from '../models/printer.dto';
+import { PrinterService } from './printer.service';
 
 describe('PrinterService', () => {
   let service: PrinterService;
-  let repository: Repository<Printer>;
 
   const mockRepository = {
     create: vi.fn(),
@@ -32,7 +30,6 @@ describe('PrinterService', () => {
     }).compile();
 
     service = module.get<PrinterService>(PrinterService);
-    repository = module.get<Repository<Printer>>(getRepositoryToken(Printer));
   });
 
   afterEach(() => {

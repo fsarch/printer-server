@@ -1,27 +1,27 @@
+import { Roles } from '@fsarch/server/uac';
 import {
+  Body,
   Controller,
   Get,
-  Post,
-  Patch,
-  Body,
   Param,
-  Query,
   ParseUUIDPipe,
-  UseGuards,
+  Patch,
+  Post,
+  Query,
 } from '@nestjs/common';
 import {
-  ApiTags,
   ApiBearerAuth,
-  ApiOperation,
-  ApiResponse,
-  ApiQuery,
   ApiExtraModels,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
-import { PrintJobService } from '../repositories/print-job.service.js';
+import { Role } from '../constants/role.enum.js';
 import {
   AlignmentReceiptDataDto,
-  CutReceiptDataDto,
   CreatePrintJobDto,
+  CutReceiptDataDto,
   LineReceiptDataDto,
   NewlineReceiptDataDto,
   PrintJobDto,
@@ -29,8 +29,7 @@ import {
   TextReceiptDataDto,
   UpdatePrintJobDto,
 } from '../models/print-job.dto.js';
-import { Roles } from '@fsarch/server/uac';
-import { Role } from '../constants/role.enum.js';
+import { PrintJobService } from '../repositories/print-job.service.js';
 
 @ApiTags('print-jobs')
 @ApiBearerAuth()
@@ -44,9 +43,7 @@ import { Role } from '../constants/role.enum.js';
 )
 @Controller({ path: 'printers/:printerId/jobs', version: '1' })
 export class PrintJobsController {
-  constructor(
-    private readonly printJobService: PrintJobService,
-  ) {}
+  constructor(private readonly printJobService: PrintJobService) {}
 
   @Post()
   @Roles(Role.manage_printers)
@@ -72,7 +69,10 @@ export class PrintJobsController {
     @Param('printerId', ParseUUIDPipe) printerId: string,
     @Body() createPrintJobDto: CreatePrintJobDto,
   ): Promise<PrintJobDto> {
-    return await this.printJobService.createPrintJob(printerId, createPrintJobDto);
+    return await this.printJobService.createPrintJob(
+      printerId,
+      createPrintJobDto,
+    );
   }
 
   @Get()
@@ -82,7 +82,8 @@ export class PrintJobsController {
     name: 'printTime',
     required: false,
     type: 'string',
-    description: 'Filter by print time status. Use "null" to get jobs without print time. Omit to get all jobs.',
+    description:
+      'Filter by print time status. Use "null" to get jobs without print time. Omit to get all jobs.',
     example: 'null',
   })
   @ApiResponse({
@@ -107,7 +108,9 @@ export class PrintJobsController {
 
   @Patch(':jobId')
   @Roles(Role.manage_printers)
-  @ApiOperation({ summary: 'Update collection time and print time for a print job' })
+  @ApiOperation({
+    summary: 'Update collection time and print time for a print job',
+  })
   @ApiResponse({
     status: 200,
     description: 'Print job updated successfully',
@@ -126,6 +129,10 @@ export class PrintJobsController {
     @Param('jobId', ParseUUIDPipe) jobId: string,
     @Body() updatePrintJobDto: UpdatePrintJobDto,
   ): Promise<PrintJobDto> {
-    return await this.printJobService.updatePrintJob(printerId, jobId, updatePrintJobDto);
+    return await this.printJobService.updatePrintJob(
+      printerId,
+      jobId,
+      updatePrintJobDto,
+    );
   }
 }

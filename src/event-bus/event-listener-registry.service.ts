@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 import { EVENT_BUS, EVENT_LISTENER_METADATA } from './event-bus.constants.js';
-import {
+import type {
   EventBusService,
   EventEnvelope,
   EventSubscription,
@@ -55,7 +55,10 @@ export class EventListenerRegistryService
   }
 
   private async registerInstanceListeners(instance: object): Promise<void> {
-    const prototype = Object.getPrototypeOf(instance) as Record<string, unknown>;
+    const prototype = Object.getPrototypeOf(instance) as Record<
+      string,
+      unknown
+    >;
     if (!prototype) {
       return;
     }
@@ -70,10 +73,9 @@ export class EventListenerRegistryService
         continue;
       }
 
-      const metadata = Reflect.getMetadata(
-        EVENT_LISTENER_METADATA,
-        method,
-      ) as EventListenerMetadata | undefined;
+      const metadata = Reflect.getMetadata(EVENT_LISTENER_METADATA, method) as
+        | EventListenerMetadata
+        | undefined;
 
       if (!metadata) {
         continue;
@@ -102,4 +104,3 @@ export class EventListenerRegistryService
     }
   }
 }
-

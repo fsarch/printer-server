@@ -1,16 +1,15 @@
-import { vi } from 'vitest';
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrintersController } from './printers.controller';
-import { PrinterService } from '../repositories/printer.service';
+import { vi } from 'vitest';
 import {
   CreatePrinterDto,
   PatchPrinterDto,
   PrinterDto,
 } from '../models/printer.dto';
+import { PrinterService } from '../repositories/printer.service';
+import { PrintersController } from './printers.controller';
 
 describe('PrintersController', () => {
   let controller: PrintersController;
-  let service: PrinterService;
 
   const mockPrinterService = {
     CreatePrinter: vi.fn(),
@@ -32,7 +31,6 @@ describe('PrintersController', () => {
     }).compile();
 
     controller = module.get<PrintersController>(PrintersController);
-    service = module.get<PrinterService>(PrinterService);
   });
 
   afterEach(() => {

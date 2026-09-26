@@ -1,12 +1,12 @@
+import { randomBytes } from 'node:crypto';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PrinterCredential } from '../database/entities/printer_credential.entity.js';
 import {
   CreatePrinterCredentialDto,
-  PatchPrinterCredentialDto
+  PatchPrinterCredentialDto,
 } from '../models/printer-credential.dto.js';
-import { randomBytes } from 'crypto';
 
 @Injectable()
 export class PrinterCredentialService {
@@ -52,7 +52,9 @@ export class PrinterCredentialService {
     return credential;
   }
 
-  async ListPrinterCredentials(printerId: string): Promise<PrinterCredential[]> {
+  async ListPrinterCredentials(
+    printerId: string,
+  ): Promise<PrinterCredential[]> {
     return await this.printerCredentialRepository.find({
       where: { printerId },
       order: { creationTime: 'DESC' },

@@ -14,7 +14,9 @@ type PostgresEventBusConfig = {
 };
 
 @Injectable()
-export class PostgresEventBusService implements EventBusService, OnModuleDestroy {
+export class PostgresEventBusService
+  implements EventBusService, OnModuleDestroy
+{
   private readonly logger = new Logger(PostgresEventBusService.name);
   private readonly handlers = new Map<string, Set<EventListenerHandler>>();
   private readonly publisherClient: Client;
@@ -55,7 +57,9 @@ export class PostgresEventBusService implements EventBusService, OnModuleDestroy
     if (!channelHandlers) {
       channelHandlers = new Set<EventListenerHandler>();
       this.handlers.set(channel, channelHandlers);
-      await this.listenerClient.query(`LISTEN ${this.escapeIdentifier(channel)}`);
+      await this.listenerClient.query(
+        `LISTEN ${this.escapeIdentifier(channel)}`,
+      );
     }
 
     channelHandlers.add(handler as EventListenerHandler);
@@ -163,7 +167,9 @@ export class PostgresEventBusService implements EventBusService, OnModuleDestroy
     }
 
     this.handlers.delete(channel);
-    await this.listenerClient.query(`UNLISTEN ${this.escapeIdentifier(channel)}`);
+    await this.listenerClient.query(
+      `UNLISTEN ${this.escapeIdentifier(channel)}`,
+    );
   }
 
   private toChannelName(topic: string): string {
@@ -179,4 +185,3 @@ export class PostgresEventBusService implements EventBusService, OnModuleDestroy
     return `"${identifier.replace(/"/g, '""')}"`;
   }
 }
-

@@ -1,15 +1,16 @@
-import { vi } from 'vitest';
+import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { NotFoundException } from '@nestjs/common';
-import { PrinterCredentialService } from './printer-credential.service';
+import { vi } from 'vitest';
 import { PrinterCredential } from '../database/entities/printer_credential.entity';
-import { CreatePrinterCredentialDto, PatchPrinterCredentialDto } from '../models/printer-credential.dto';
+import {
+  CreatePrinterCredentialDto,
+  PatchPrinterCredentialDto,
+} from '../models/printer-credential.dto';
+import { PrinterCredentialService } from './printer-credential.service';
 
 describe('PrinterCredentialService', () => {
   let service: PrinterCredentialService;
-  let repository: Repository<PrinterCredential>;
 
   const mockRepository = {
     create: vi.fn(),
@@ -32,7 +33,6 @@ describe('PrinterCredentialService', () => {
     }).compile();
 
     service = module.get<PrinterCredentialService>(PrinterCredentialService);
-    repository = module.get<Repository<PrinterCredential>>(getRepositoryToken(PrinterCredential));
   });
 
   afterEach(() => {
@@ -62,7 +62,10 @@ describe('PrinterCredentialService', () => {
       mockRepository.create.mockReturnValue(mockCredential);
       mockRepository.save.mockResolvedValue(mockCredential);
 
-      const result = await service.CreatePrinterCredential(printerId, createDto);
+      const result = await service.CreatePrinterCredential(
+        printerId,
+        createDto,
+      );
 
       expect(mockRepository.create).toHaveBeenCalledWith({
         id: expect.any(String), // UUID
@@ -72,7 +75,7 @@ describe('PrinterCredentialService', () => {
       });
       expect(mockRepository.save).toHaveBeenCalledWith(mockCredential);
       expect(result).toBe(mockCredential);
-      
+
       // Verify the generated token is within length limits
       const createCall = mockRepository.create.mock.calls[0][0];
       expect(createCall.token).toBeDefined();
@@ -108,7 +111,9 @@ describe('PrinterCredentialService', () => {
 
       mockRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.GetById(credentialId, printerId)).rejects.toThrow(NotFoundException);
+      await expect(service.GetById(credentialId, printerId)).rejects.toThrow(
+        NotFoundException,
+      );
       expect(mockRepository.findOne).toHaveBeenCalledWith({
         where: { id: credentialId, printerId },
       });
@@ -175,7 +180,11 @@ describe('PrinterCredentialService', () => {
 
       mockRepository.update.mockResolvedValue({ affected: 1 });
 
-      const result = await service.UpdatePrinterCredential(credentialId, printerId, patchDto);
+      const result = await service.UpdatePrinterCredential(
+        credentialId,
+        printerId,
+        patchDto,
+      );
 
       expect(mockRepository.findOne).toHaveBeenCalledTimes(2);
       expect(mockRepository.update).toHaveBeenCalledWith(
@@ -222,7 +231,10 @@ describe('PrinterCredentialService', () => {
       expect(mockRepository.findOne).toHaveBeenCalledWith({
         where: { id: credentialId, printerId },
       });
-      expect(mockRepository.softDelete).toHaveBeenCalledWith({ id: credentialId, printerId });
+      expect(mockRepository.softDelete).toHaveBeenCalledWith({
+        id: credentialId,
+        printerId,
+      });
     });
 
     it('should throw NotFoundException when deleting non-existent credential', async () => {
@@ -231,7 +243,9 @@ describe('PrinterCredentialService', () => {
 
       mockRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.DeleteById(credentialId, printerId)).rejects.toThrow(NotFoundException);
+      await expect(service.DeleteById(credentialId, printerId)).rejects.toThrow(
+        NotFoundException,
+      );
       expect(mockRepository.softDelete).not.toHaveBeenCalled();
     });
   });

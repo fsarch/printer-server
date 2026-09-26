@@ -1,39 +1,35 @@
+import { Roles } from '@fsarch/server/uac';
 import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Delete,
   Body,
-  Param,
-  ParseUUIDPipe,
+  Controller,
+  Delete,
+  Get,
   HttpCode,
   HttpStatus,
-  UseGuards,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
 } from '@nestjs/common';
 import {
-  ApiTags,
   ApiBearerAuth,
   ApiOperation,
   ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
-import { PrinterService } from '../repositories/printer.service.js';
+import { Role } from '../constants/role.enum.js';
 import {
   CreatePrinterDto,
   PatchPrinterDto,
   PrinterDto,
 } from '../models/printer.dto.js';
-
-import { Roles } from '@fsarch/server/uac';
-import { Role } from '../constants/role.enum.js';
+import { PrinterService } from '../repositories/printer.service.js';
 
 @ApiTags('printers')
 @ApiBearerAuth()
 @Controller({ path: 'printers', version: '1' })
 export class PrintersController {
-  constructor(
-    private readonly printerService: PrinterService,
-  ) {}
+  constructor(private readonly printerService: PrinterService) {}
 
   @Post()
   @Roles(Role.manage_printers)

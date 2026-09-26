@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { EVENT_BUS } from './event-bus.constants.js';
-import { EventBusService } from './event-bus.types.js';
+import type { EventBusService } from './event-bus.types.js';
 
 @Injectable()
 export class EventPublisherService {
@@ -16,4 +16,3 @@ export class EventPublisherService {
     });
   }
 }
-

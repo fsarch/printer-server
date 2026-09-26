@@ -3,14 +3,15 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
+    root: './',
     globals: true,
-    root: './src',
-    include: ['**/*.spec.ts'],
     environment: 'node',
+    include: ['src/**/*.spec.ts'],
     coverage: {
       provider: 'v8',
-      reportsDirectory: '../coverage',
-      include: ['**/*.{ts,js}'],
+      reportsDirectory: './coverage',
+      include: ['src/**/*.ts'],
+      exclude: ['src/**/*.spec.ts'],
     },
   },
   plugins: [

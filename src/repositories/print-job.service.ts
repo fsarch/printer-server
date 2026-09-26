@@ -1,24 +1,30 @@
-import { Injectable, NotFoundException, NotImplementedException, BadRequestException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Repository } from 'typeorm';
-import { PrintJob } from '../database/entities/print_job.entity.js';
-import { ReceiptPrintJob } from '../database/entities/receipt_print_job.entity.js';
-import { Printer } from '../database/entities/printer.entity.js';
 import {
-  CreatePrintJobDto,
-  PrintJobDto,
-  UpdatePrintJobDto,
-  AlignmentReceiptDataDto,
-  TextReceiptDataDto,
-  CutReceiptDataDto,
-  NewlineReceiptDataDto,
-  QrReceiptDataDto, LineReceiptDataDto
-} from '../models/print-job.dto.js';
-import { PrinterType as PrinterTypeEnum } from '../constants/printer-type.enum.js';
-import { PrintJobType as PrintJobTypeEnum } from '../constants/print-job-type.enum.js';
-import { validate } from 'class-validator';
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  NotImplementedException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { plainToClass } from 'class-transformer';
+import { validate } from 'class-validator';
 import type { FindOptionsWhere } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
+import { PrintJobType as PrintJobTypeEnum } from '../constants/print-job-type.enum.js';
+import { PrinterType as PrinterTypeEnum } from '../constants/printer-type.enum.js';
+import { PrintJob } from '../database/entities/print_job.entity.js';
+import { Printer } from '../database/entities/printer.entity.js';
+import { ReceiptPrintJob } from '../database/entities/receipt_print_job.entity.js';
+import {
+  AlignmentReceiptDataDto,
+  CreatePrintJobDto,
+  CutReceiptDataDto,
+  LineReceiptDataDto,
+  NewlineReceiptDataDto,
+  PrintJobDto,
+  QrReceiptDataDto,
+  TextReceiptDataDto,
+  UpdatePrintJobDto,
+} from '../models/print-job.dto.js';
 
 @Injectable()
 export class PrintJobService {
@@ -31,7 +37,10 @@ export class PrintJobService {
     private readonly printerRepository: Repository<Printer>,
   ) {}
 
-  async createPrintJob(printerId: string, createPrintJobDto: CreatePrintJobDto): Promise<PrintJobDto> {
+  async createPrintJob(
+    printerId: string,
+    createPrintJobDto: CreatePrintJobDto,
+  ): Promise<PrintJobDto> {
     // Get printer and check if it exists
     const printer = await this.printerRepository.findOne({
       where: { id: printerId },
@@ -43,11 +52,17 @@ export class PrintJobService {
 
     // Check printer type - only receipt printers are supported
     if (printer.printerTypeId !== PrinterTypeEnum.RECEIPT) {
-      throw new NotImplementedException('Print jobs are only supported for receipt printers');
+      throw new NotImplementedException(
+        'Print jobs are only supported for receipt printers',
+      );
     }
 
     // Validate receipt data
-    await Promise.all(createPrintJobDto.data.map(async (d) => await this.validateReceiptData(d)));
+    await Promise.all(
+      createPrintJobDto.data.map(
+        async (d) => await this.validateReceiptData(d),
+      ),
+    );
 
     // Create print job
     const printJob = this.printJobRepository.create({
@@ -68,15 +83,21 @@ export class PrintJobService {
       data: createPrintJobDto.data,
     });
 
-    const savedReceiptPrintJob = await this.receiptPrintJobRepository.save(receiptPrintJob);
+    const savedReceiptPrintJob =
+      await this.receiptPrintJobRepository.save(receiptPrintJob);
 
     return PrintJobDto.FromDbo(savedPrintJob, savedReceiptPrintJob);
   }
 
-  async listPrintJobs(printerId: string, printTimeFilter?: string): Promise<PrintJobDto[]> {
+  async listPrintJobs(
+    printerId: string,
+    printTimeFilter?: string,
+  ): Promise<PrintJobDto[]> {
     // Validate printTime parameter
     if (printTimeFilter !== undefined && printTimeFilter !== 'null') {
-      throw new BadRequestException('printTime parameter must be "null" or omitted');
+      throw new BadRequestException(
+        'printTime parameter must be "null" or omitted',
+      );
     }
 
     // Check if printer exists
@@ -120,7 +141,11 @@ export class PrintJobService {
     return result;
   }
 
-  async updatePrintJob(printerId: string, jobId: string, updatePrintJobDto: UpdatePrintJobDto): Promise<PrintJobDto> {
+  async updatePrintJob(
+    printerId: string,
+    jobId: string,
+    updatePrintJobDto: UpdatePrintJobDto,
+  ): Promise<PrintJobDto> {
     // Check if printer exists
     const printer = await this.printerRepository.findOne({
       where: { id: printerId },
@@ -136,7 +161,9 @@ export class PrintJobService {
     });
 
     if (!printJob) {
-      throw new NotFoundException(`Print job with ID ${jobId} not found for printer ${printerId}`);
+      throw new NotFoundException(
+        `Print job with ID ${jobId} not found for printer ${printerId}`,
+      );
     }
 
     // Update only the provided fields
@@ -169,16 +196,19 @@ export class PrintJobService {
     const updatedPrintJob = await this.printJobRepository.findOne({
       where: { id: jobId },
     });
+    if (!updatedPrintJob) {
+      throw new NotFoundException(`Print job with ID ${jobId} not found`);
+    }
 
     // Get receipt data if it's a receipt job
     let receiptData: ReceiptPrintJob | undefined;
-    if (updatedPrintJob && updatedPrintJob.printJobTypeId === PrintJobTypeEnum.RECEIPT) {
+    if (updatedPrintJob.printJobTypeId === PrintJobTypeEnum.RECEIPT) {
       receiptData = await this.receiptPrintJobRepository.findOne({
         where: { id: updatedPrintJob.id },
       });
     }
 
-    return PrintJobDto.FromDbo(updatedPrintJob!, receiptData);
+    return PrintJobDto.FromDbo(updatedPrintJob, receiptData);
   }
 
   private async validateReceiptData(data: any): Promise<void> {
@@ -211,16 +241,18 @@ export class PrintJobService {
         dtoClass = LineReceiptDataDto;
         break;
       default:
-        throw new BadRequestException(`Invalid $type: ${data.$type}. Must be one of: alignment, text, cut, newline, qr-code`);
+        throw new BadRequestException(
+          `Invalid $type: ${data.$type}. Must be one of: alignment, text, cut, newline, qr-code`,
+        );
     }
 
     const dto = plainToClass(dtoClass, data);
     const errors = await validate(dto);
 
     if (errors.length > 0) {
-      const errorMessages = errors.map(error =>
-        Object.values(error.constraints || {}).join(', ')
-      ).join('; ');
+      const errorMessages = errors
+        .map((error) => Object.values(error.constraints || {}).join(', '))
+        .join('; ');
       throw new BadRequestException(`Validation failed: ${errorMessages}`);
     }
 

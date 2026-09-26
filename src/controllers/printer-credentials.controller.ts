@@ -1,31 +1,31 @@
+import { Roles } from '@fsarch/server/uac';
 import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Delete,
   Body,
-  Param,
-  ParseUUIDPipe,
+  Controller,
+  Delete,
+  Get,
   HttpCode,
   HttpStatus,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
 } from '@nestjs/common';
 import {
-  ApiTags,
   ApiBearerAuth,
   ApiOperation,
-  ApiResponse,
   ApiParam,
+  ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
-import { PrinterCredentialService } from '../repositories/printer-credential.service.js';
+import { Role } from '../constants/role.enum.js';
 import {
   CreatePrinterCredentialDto,
   PatchPrinterCredentialDto,
   PrinterCredentialDto,
   PrinterCredentialWithTokenDto,
 } from '../models/printer-credential.dto.js';
-import { Roles } from '@fsarch/server/uac';
-import { Role } from '../constants/role.enum.js';
+import { PrinterCredentialService } from '../repositories/printer-credential.service.js';
 
 @ApiTags('printer-credentials')
 @ApiBearerAuth()
@@ -53,10 +53,11 @@ export class PrinterCredentialsController {
     @Param('printerId', ParseUUIDPipe) printerId: string,
     @Body() createPrinterCredentialDto: CreatePrinterCredentialDto,
   ): Promise<PrinterCredentialWithTokenDto> {
-    const credential = await this.printerCredentialService.CreatePrinterCredential(
-      printerId,
-      createPrinterCredentialDto,
-    );
+    const credential =
+      await this.printerCredentialService.CreatePrinterCredential(
+        printerId,
+        createPrinterCredentialDto,
+      );
     return PrinterCredentialWithTokenDto.FromDbo(credential);
   }
 
@@ -77,10 +78,11 @@ export class PrinterCredentialsController {
   async findAll(
     @Param('printerId', ParseUUIDPipe) printerId: string,
   ): Promise<PrinterCredentialDto[]> {
-    const credentials = await this.printerCredentialService.ListPrinterCredentials(
-      printerId,
+    const credentials =
+      await this.printerCredentialService.ListPrinterCredentials(printerId);
+    return credentials.map((credential) =>
+      PrinterCredentialDto.FromDbo(credential),
     );
-    return credentials.map((credential) => PrinterCredentialDto.FromDbo(credential));
   }
 
   @Get(':id')
@@ -111,7 +113,10 @@ export class PrinterCredentialsController {
     @Param('printerId', ParseUUIDPipe) printerId: string,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<PrinterCredentialDto> {
-    const credential = await this.printerCredentialService.GetById(id, printerId);
+    const credential = await this.printerCredentialService.GetById(
+      id,
+      printerId,
+    );
     return PrinterCredentialDto.FromDbo(credential);
   }
 
@@ -144,11 +149,12 @@ export class PrinterCredentialsController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() patchPrinterCredentialDto: PatchPrinterCredentialDto,
   ): Promise<PrinterCredentialDto> {
-    const credential = await this.printerCredentialService.UpdatePrinterCredential(
-      id,
-      printerId,
-      patchPrinterCredentialDto,
-    );
+    const credential =
+      await this.printerCredentialService.UpdatePrinterCredential(
+        id,
+        printerId,
+        patchPrinterCredentialDto,
+      );
     return PrinterCredentialDto.FromDbo(credential);
   }
 

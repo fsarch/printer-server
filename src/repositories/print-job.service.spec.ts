@@ -1,20 +1,21 @@
-import { vi } from 'vitest';
+import {
+  BadRequestException,
+  NotFoundException,
+  NotImplementedException,
+} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrintJobService } from './print-job.service';
-import { IsNull, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { PrintJob } from '../database/entities/print_job.entity';
-import { ReceiptPrintJob } from '../database/entities/receipt_print_job.entity';
-import { Printer } from '../database/entities/printer.entity';
-import { PrinterType } from '../constants/printer-type.enum';
+import { IsNull } from 'typeorm';
+import { vi } from 'vitest';
 import { PrintJobType } from '../constants/print-job-type.enum';
-import { NotFoundException, NotImplementedException, BadRequestException } from '@nestjs/common';
+import { PrinterType } from '../constants/printer-type.enum';
+import { PrintJob } from '../database/entities/print_job.entity';
+import { Printer } from '../database/entities/printer.entity';
+import { ReceiptPrintJob } from '../database/entities/receipt_print_job.entity';
+import { PrintJobService } from './print-job.service';
 
 describe('PrintJobService', () => {
   let service: PrintJobService;
-  let printJobRepository: Repository<PrintJob>;
-  let receiptPrintJobRepository: Repository<ReceiptPrintJob>;
-  let printerRepository: Repository<Printer>;
 
   const mockPrintJobRepository = {
     create: vi.fn(),
@@ -54,9 +55,6 @@ describe('PrintJobService', () => {
     }).compile();
 
     service = module.get<PrintJobService>(PrintJobService);
-    printJobRepository = module.get<Repository<PrintJob>>(getRepositoryToken(PrintJob));
-    receiptPrintJobRepository = module.get<Repository<ReceiptPrintJob>>(getRepositoryToken(ReceiptPrintJob));
-    printerRepository = module.get<Repository<Printer>>(getRepositoryToken(Printer));
   });
 
   afterEach(() => {
@@ -160,7 +158,9 @@ describe('PrintJobService', () => {
 
       expect(result).toBeDefined();
       expect(result.printerId).toBe(printerId);
-      expect(result.data).toEqual([{ $type: 'qr-code', value: 'https://example.com' }]);
+      expect(result.data).toEqual([
+        { $type: 'qr-code', value: 'https://example.com' },
+      ]);
     });
   });
 
@@ -203,7 +203,7 @@ describe('PrintJobService', () => {
       await expect(
         service.listPrintJobs('printer-id', 'invalid-value'),
       ).rejects.toThrow(BadRequestException);
-      
+
       await expect(
         service.listPrintJobs('printer-id', '2023-01-01T00:00:00Z'),
       ).rejects.toThrow(BadRequestException);
@@ -311,7 +311,7 @@ describe('PrintJobService', () => {
       const printerId = 'printer-id';
       const jobId = 'job-id';
       const collectionTime = '2023-01-01T00:00:00Z';
-      
+
       const mockPrinter = { id: printerId };
       const mockPrintJob = {
         id: jobId,
@@ -334,7 +334,9 @@ describe('PrintJobService', () => {
         .mockResolvedValueOnce(mockPrintJob) // First call for validation
         .mockResolvedValueOnce(mockUpdatedPrintJob); // Second call after update
       mockPrintJobRepository.update.mockResolvedValue({ affected: 1 });
-      mockReceiptPrintJobRepository.findOne.mockResolvedValue(mockReceiptPrintJob);
+      mockReceiptPrintJobRepository.findOne.mockResolvedValue(
+        mockReceiptPrintJob,
+      );
 
       const result = await service.updatePrintJob(printerId, jobId, {
         collectionTime,
@@ -351,7 +353,7 @@ describe('PrintJobService', () => {
       const printerId = 'printer-id';
       const jobId = 'job-id';
       const printTime = '2023-01-01T12:00:00Z';
-      
+
       const mockPrinter = { id: printerId };
       const mockPrintJob = {
         id: jobId,
@@ -391,7 +393,7 @@ describe('PrintJobService', () => {
       const jobId = 'job-id';
       const collectionTime = '2023-01-01T00:00:00Z';
       const printTime = '2023-01-01T12:00:00Z';
-      
+
       const mockPrinter = { id: printerId };
       const mockPrintJob = {
         id: jobId,
@@ -432,7 +434,7 @@ describe('PrintJobService', () => {
     it('should return current job when no fields to update', async () => {
       const printerId = 'printer-id';
       const jobId = 'job-id';
-      
+
       const mockPrinter = { id: printerId };
       const mockPrintJob = {
         id: jobId,

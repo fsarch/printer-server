@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsUUID, IsOptional } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 import { Printer } from '../database/entities/printer.entity.js';
 
 export class CreatePrinterDto {
