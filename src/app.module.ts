@@ -1,8 +1,11 @@
 import { Module } from '@nestjs/common';
-import { PrintJobsModule } from './controllers/print-jobs.module.js';
-import { PrintersModule } from './controllers/printers.module.js';
+import { descriptor } from './lib/index.js';
 
+/**
+ * Standalone root module only: the service itself lives in
+ * `descriptor.module` (see `src/lib`).
+ */
 @Module({
-  imports: [PrintersModule, PrintJobsModule],
+  imports: [descriptor.module.register()],
 })
 export class AppModule {}
